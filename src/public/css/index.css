@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        sans-serif;
+}
+
+body {
+    background-color: #f5f6f7;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.profile-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #e1e1e1;
+    border-radius: 50%;
+}
+
+.welcome-message {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.write-button {
+    background-color: #aca0eb;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.write-button:hover {
+    background-color: #7f6aee;
+}
+
+.posts {
+    margin-top: 20px;
+}
+
+.post {
+    background-color: white;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.post-title {
+    font-size: 18px;
+    font-weight: bold;
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.post-date {
+    color: #666;
+    font-size: 14px;
+}
+
+.post-stats {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.post-stats span {
+    margin-right: 16px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.user-avatar {
+    width: 24px;
+    height: 24px;
+    background-color: #e1e1e1;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.user-name {
+    font-size: 14px;
+    color: #333;
+}
