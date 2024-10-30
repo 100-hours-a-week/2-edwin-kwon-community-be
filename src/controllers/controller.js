@@ -50,3 +50,21 @@ export const dbTest = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export const findNicknamebyUserId = async (req, res) => {
+    const userId = req.params.user_id;
+    try {
+        const user = await req.db.query(
+            'SELECT nickname FROM user WHERE user_id = ?;',
+            userId,
+        );
+        if (user.length > 0) {
+            res.json({ nickname: user[0][0].nickname });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching nickname:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};

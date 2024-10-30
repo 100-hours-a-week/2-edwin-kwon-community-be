@@ -7,6 +7,7 @@ import {
     patchTest,
     deleteTest,
     dbTest,
+    findNicknamebyUserId,
 } from '../controllers/controller.js';
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.put('/test', putTest);
 router.patch('/test', patchTest);
 router.delete('/test', deleteTest);
 router.get('/dbtest', dbTest);
+router.get('/getNickname/:user_id', findNicknamebyUserId);
 
 export default router;
