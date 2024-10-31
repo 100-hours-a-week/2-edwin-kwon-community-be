@@ -8,6 +8,8 @@ import {
     deleteTest,
     dbTest,
     findNicknamebyUserId,
+    findUserbyUserId,
+    findPostbyPostId,
 } from '../controllers/controller.js';
 
 const router = express.Router();
@@ -19,6 +21,8 @@ router.put('/test', putTest);
 router.patch('/test', patchTest);
 router.delete('/test', deleteTest);
 router.get('/dbtest', dbTest);
-router.get('/getNickname/:user_id', findNicknamebyUserId);
+router.get('/user-nickname/:userid', findNicknamebyUserId);
+router.get('/users/:userid', findUserbyUserId);
+router.get('/post/:postid', findPostbyPostId);
 
 export default router;

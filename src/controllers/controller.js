@@ -52,7 +52,7 @@ export const dbTest = async (req, res) => {
 };
 
 export const findNicknamebyUserId = async (req, res) => {
-    const userId = req.params.user_id;
+    const userId = req.params.userid;
     try {
         const user = await req.db.query(
             'SELECT nickname FROM user WHERE user_id = ?;',
@@ -65,6 +65,43 @@ export const findNicknamebyUserId = async (req, res) => {
         }
     } catch (error) {
         console.error('Error fetching nickname:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+export const findUserbyUserId = async (req, res) => {
+    const userId = req.params.userid;
+    try {
+        const user = await req.db.query(
+            'SELECT * FROM User WHERE user_id = ?;',
+            userId,
+        );
+        if (user.length > 0) {
+            res.json(user[0][0]);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+export const findPostbyPostId = async (req, res) => {
+    const postId = req.params.postid;
+    console.log('postId:', postId);
+    try {
+        const post = await req.db.query(
+            'SELECT * FROM Board WHERE board_id = ?;',
+            postId,
+        );
+        if (post.length > 0) {
+            res.json(post[0][0]);
+        } else {
+            res.status(404).json({ error: 'Post not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching Post:', error);
         res.status(500).json({ error: 'Server error' });
     }
 };
