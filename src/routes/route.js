@@ -1,6 +1,5 @@
 import express from 'express';
 import {
-    getTest,
     getSlow,
     postTest,
     putTest,
@@ -13,8 +12,8 @@ import {
 } from '../controllers/controller.js';
 
 const router = express.Router();
+const apiPrefix = '/api/v1';
 
-router.get('/', getTest);
 router.get('/slow', getSlow);
 router.post('/test', postTest);
 router.put('/test', putTest);

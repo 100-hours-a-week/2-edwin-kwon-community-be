@@ -4,10 +4,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const getTest = (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
-};
-
 export const getSlow = (req, res) => {
     setTimeout(() => {
         res.sendFile(path.join(__dirname, '../public', 'index.html'));
