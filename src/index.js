@@ -34,7 +34,7 @@ app.use(dbConnectionMiddleware);
 // app.use(express.urlencoded({ extended: true }));
 
 // 라우터 적용
-app.use('/', testRoutes);
+app.use('/api/v1', testRoutes);
 
 app.set('port', process.env.PORT);
 
