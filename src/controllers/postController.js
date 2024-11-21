@@ -3,7 +3,8 @@ import PostModel from '../models/postModel.js';
 class PostController {
     static async getPostById(req, res) {
         try {
-            const postId = req.params.id;
+            const postId = req.params.postid;
+            console.log(postId);
             const post = await PostModel.getPostById(postId);
 
             if (post) {
@@ -72,6 +73,7 @@ class PostController {
     }
 
     static async getPostList(req, res) {
+        console.log('getPostList');
         try {
             const postList = await PostModel.getPostList();
             res.json(postList);

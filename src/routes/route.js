@@ -10,17 +10,21 @@ import {
     findPostbyPostId,
 } from '../controllers/controller.js';
 import postController from '../controllers/postController.js';
+import userController from '../controllers/userController.js';
 
 const router = express.Router();
+
+router.get('/posts', postController.getPostList);
+router.get('/posts/:postid', postController.getPostById);
+
+router.get('/users', userController.getUserList);
+router.get('/users/:userid', userController.getUserById);
 
 router.get('/slow', getSlow);
 router.post('/test', postTest);
 router.put('/test', putTest);
 router.patch('/test', patchTest);
 router.delete('/test', deleteTest);
-router.get('/posts', postController.getPostList);
 router.get('/user-nickname/:userid', findNicknamebyUserId);
-router.get('/users/:userid', findUserbyUserId);
-router.get('/post/:postid', findPostbyPostId);
 
 export default router;

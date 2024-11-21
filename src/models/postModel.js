@@ -31,7 +31,7 @@ const postModel = {
 
     // 특정 ID의 게시물 가져오기
     async getPostById(postId) {
-        const query = `SELECT * FROM posts WHERE id = ?`;
+        const query = `SELECT * FROM post WHERE post_id = ?`;
         const [rows] = await pool.query(query, [postId]);
         return rows[0]; // 단일 게시물 반환
     },
