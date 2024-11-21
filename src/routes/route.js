@@ -9,7 +9,7 @@ import {
     findUserbyUserId,
     findPostbyPostId,
 } from '../controllers/controller.js';
-import { getPostList } from '../controllers/postController.js';
+import postController from '../controllers/postController.js';
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.post('/test', postTest);
 router.put('/test', putTest);
 router.patch('/test', patchTest);
 router.delete('/test', deleteTest);
-router.get('/posts', getPostList);
+router.get('/posts', postController.getPostList);
 router.get('/user-nickname/:userid', findNicknamebyUserId);
 router.get('/users/:userid', findUserbyUserId);
 router.get('/post/:postid', findPostbyPostId);
