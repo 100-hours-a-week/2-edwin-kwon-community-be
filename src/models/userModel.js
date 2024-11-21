@@ -27,7 +27,6 @@ const userModel = {
 
     // 특정 ID의 유저 가져오기
     async getUserById(userId) {
-        console.log('getUserById ' + userId);
         const query = `SELECT * FROM member WHERE member_id = ?`;
         const [rows] = await pool.query(query, [userId]);
         return rows[0]; // 단일 유저 반환
