@@ -4,10 +4,11 @@ class PostController {
     static async getPostById(req, res) {
         try {
             const postId = req.params.postid;
-            console.log(postId);
             const post = await PostModel.getPostById(postId);
 
             if (post) {
+                // 조회수 증가
+                await PostModel.increaseViewCount(postId);
                 res.json(post);
             } else {
                 res.status(404).json({ error: '포스트를 찾을 수 없습니다.' });

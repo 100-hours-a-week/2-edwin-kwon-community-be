@@ -4,7 +4,6 @@ class UserController {
     static async getUserById(req, res) {
         try {
             const userId = req.params.userid;
-            console.log('getUserById ' + req.params.userid);
             const user = await UserModel.getUserById(userId);
 
             if (user) {

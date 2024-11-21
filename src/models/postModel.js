@@ -63,6 +63,13 @@ const postModel = {
         const [result] = await pool.query(query, [postId]);
         return result.affectedRows > 0; // 삭제 성공 여부 반환
     },
+
+    // 조회수 증가
+    async increaseViewCount(postId) {
+        const query = `UPDATE post SET view_cnt = view_cnt + 1 WHERE post_id = ?`;
+        const [result] = await pool.query(query, [postId]);
+        return result.affectedRows > 0; // 증가 성공 여부 반환
+    },
 };
 
 export default postModel;
