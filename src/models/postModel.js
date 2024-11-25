@@ -37,12 +37,13 @@ const postModel = {
     },
 
     // 게시물 생성
-    async createPost({ title, content, authorId }) {
+    async createPost({ title, content, img }) {
+        // 임시로 1번 유저로 생성
         const query = `
-      INSERT INTO posts (title, content, author_id, created_at) 
-      VALUES (?, ?, ?, NOW())
+      INSERT INTO post (title, content, img, created_at, updated_at, member_id, like_cnt, comment_cnt, view_cnt)
+      VALUES (?, ?, ?, NOW(), NOW(), 1, 0, 0, 0)
     `;
-        const [result] = await pool.query(query, [title, content, authorId]);
+        const [result] = await pool.query(query, [title, content, img]);
         return result.insertId; // 생성된 게시물 ID 반환
     },
 

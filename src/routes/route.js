@@ -16,6 +16,7 @@ import commentController from '../controllers/commentController.js';
 const router = express.Router();
 
 router.get('/posts', postController.getPostList);
+router.post('/posts', postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
 
 router.get('/users', userController.getUserList);

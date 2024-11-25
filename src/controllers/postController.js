@@ -20,13 +20,12 @@ class PostController {
 
     static async createPost(req, res) {
         try {
-            const { title, content, authorId } = req.body;
-            const insertId = await PostModel.create({
+            const { title, content, img } = req.body;
+            const insertId = await PostModel.createPost({
                 title,
                 content,
-                authorId,
+                img,
             });
-
             res.status(201).json({ message: '포스트 생성 성공', id: insertId });
         } catch (error) {
             res.status(500).json({

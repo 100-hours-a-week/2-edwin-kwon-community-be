@@ -30,8 +30,9 @@ app.use(rateLimitMiddleware);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(timeoutMiddleware);
 app.use(dbConnectionMiddleware);
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' })); // base64 이미지 때문에 limit 설정 필요
 
 // 라우터 적용
 app.use('/api/v1', testRoutes);
