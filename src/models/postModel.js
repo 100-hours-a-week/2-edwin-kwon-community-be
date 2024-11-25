@@ -48,13 +48,13 @@ const postModel = {
     },
 
     // 게시물 업데이트
-    async updatePost(postId, { title, content }) {
+    async updatePost(postId, { title, content, img }) {
         const query = `
       UPDATE post 
-      SET title = ?, content = ?, updated_at = NOW() 
-      WHERE id = ?
+      SET title = ?, content = ?, img = ?, updated_at = NOW() 
+      WHERE post_id = ?
     `;
-        const [result] = await pool.query(query, [title, content, postId]);
+        const [result] = await pool.query(query, [title, content, img, postId]);
         return result.affectedRows > 0; // 업데이트 성공 여부 반환
     },
 

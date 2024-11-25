@@ -35,11 +35,13 @@ class PostController {
     }
 
     static async updatePost(req, res) {
+        console.log('updatePost');
         try {
-            const { title, content } = req.body;
-            const success = await PostModel.update(req.params.id, {
+            const { title, content, img } = req.body;
+            const success = await PostModel.updatePost(req.params.postid, {
                 title,
                 content,
+                img,
             });
 
             if (success) {
