@@ -41,6 +41,22 @@ CREATE TABLE `like` (
 	`post_id`	BIGINT	NOT NULL
 );
 
+ALTER TABLE post
+MODIFY COLUMN post_id BIGINT AUTO_INCREMENT,
+ADD PRIMARY KEY (post_id);
+
+ALTER TABLE `member`
+MODIFY COLUMN `member_id` BIGINT NOT NULL AUTO_INCREMENT,
+ADD PRIMARY KEY (`member_id`);
+
+ALTER TABLE `comment`
+MODIFY COLUMN `comment_id` BIGINT NOT NULL AUTO_INCREMENT,
+ADD PRIMARY KEY (`comment_id`);
+
+ALTER TABLE `like`
+MODIFY COLUMN `like_id` BIGINT NOT NULL AUTO_INCREMENT,
+ADD PRIMARY KEY (`like_id`);
+
 -- Member 테이블 데이터
 INSERT INTO `member` (`member_id`, `email`, `password`, `nickname`, `img`)
 VALUES
