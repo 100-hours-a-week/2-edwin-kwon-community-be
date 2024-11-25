@@ -21,12 +21,12 @@ const commentModel = {
     },
 
     // 댓글 생성
-    async createComment({ postId, content, memberId }) {
+    async createComment(postId, { content }) {
         const query = `
             INSERT INTO comment (post_id, content, member_id, created_at) 
-            VALUES (?, ?, ?, NOW())
+            VALUES (?, ?, 1, NOW())
         `;
-        const [result] = await pool.query(query, [postId, content, memberId]);
+        const [result] = await pool.query(query, [postId, content]);
         return result.insertId; // 생성된 댓글 ID 반환
     },
 

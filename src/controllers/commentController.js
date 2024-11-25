@@ -17,12 +17,12 @@ class CommentController {
     }
 
     static async createComment(req, res) {
+        console.log('createComment');
         try {
-            const { content, authorId, postId } = req.body;
-            const insertId = await CommentModel.create({
+            const postId = req.params.postid;
+            const { content } = req.body;
+            const insertId = await CommentModel.createComment(postId, {
                 content,
-                authorId,
-                postId,
             });
 
             res.status(201).json({ message: '댓글 생성 성공', id: insertId });

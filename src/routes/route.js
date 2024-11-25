@@ -22,6 +22,7 @@ router.get('/users', userController.getUserList);
 router.get('/users/:userid', userController.getUserById);
 
 router.get('/posts/:postid/comments', commentController.getCommentList);
+router.post('/posts/:postid/comments', commentController.createComment);
 
 router.get('/slow', getSlow);
 router.post('/test', postTest);
