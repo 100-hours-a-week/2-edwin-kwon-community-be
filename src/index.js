@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
-import testRoutes from './routes/route.js';
+import routes from './routes/route.js';
 import rateLimitMiddleware from './middleware/rateLimitMiddleware.js';
 import timeoutMiddleware from './middleware/timeoutMiddleware.js';
 import {
@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '50mb' })); // base64 이미지 때문에 limit 설정 필요
 
 // 라우터 적용
-app.use('/api/v1', testRoutes);
+app.use('/api/v1', routes);
 
 app.set('port', process.env.PORT);
 

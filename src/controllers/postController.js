@@ -58,7 +58,7 @@ class PostController {
 
     static async deletePost(req, res) {
         try {
-            const success = await PostModel.delete(req.params.id);
+            const success = await PostModel.deletePost(req.params.postid);
 
             if (success) {
                 res.json({ message: '포스트가 성공적으로 삭제되었습니다.' });

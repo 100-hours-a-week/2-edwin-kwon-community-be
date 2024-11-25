@@ -4,10 +4,7 @@ import {
     postTest,
     putTest,
     patchTest,
-    deleteTest,
     findNicknamebyUserId,
-    findUserbyUserId,
-    findPostbyPostId,
 } from '../controllers/controller.js';
 import postController from '../controllers/postController.js';
 import userController from '../controllers/userController.js';
@@ -18,6 +15,7 @@ const router = express.Router();
 router.get('/posts', postController.getPostList);
 router.post('/posts', postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
+router.delete('/posts/:postid', postController.deletePost);
 
 router.get('/users', userController.getUserList);
 router.get('/users/:userid', userController.getUserById);
@@ -28,7 +26,6 @@ router.get('/slow', getSlow);
 router.post('/test', postTest);
 router.put('/test', putTest);
 router.patch('/test', patchTest);
-router.delete('/test', deleteTest);
 router.get('/user-nickname/:userid', findNicknamebyUserId);
 
 export default router;

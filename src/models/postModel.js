@@ -24,7 +24,7 @@ const postModel = {
     },
     // 모든 게시물 가져오기
     async getAllPosts() {
-        const query = `SELECT * FROM posts ORDER BY created_at DESC`;
+        const query = `SELECT * FROM post ORDER BY created_at DESC`;
         const [rows] = await pool.query(query);
         return rows;
     },
@@ -50,7 +50,7 @@ const postModel = {
     // 게시물 업데이트
     async updatePost(postId, { title, content }) {
         const query = `
-      UPDATE posts 
+      UPDATE post 
       SET title = ?, content = ?, updated_at = NOW() 
       WHERE id = ?
     `;
@@ -60,7 +60,7 @@ const postModel = {
 
     // 게시물 삭제
     async deletePost(postId) {
-        const query = `DELETE FROM posts WHERE id = ?`;
+        const query = `DELETE FROM post WHERE post_id = ?`;
         const [result] = await pool.query(query, [postId]);
         return result.affectedRows > 0; // 삭제 성공 여부 반환
     },
