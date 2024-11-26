@@ -36,9 +36,12 @@ class CommentController {
     static async updateComment(req, res) {
         try {
             const { content } = req.body;
-            const success = await CommentModel.update(req.params.id, {
-                content,
-            });
+            const success = await CommentModel.updateComment(
+                req.params.commentid,
+                {
+                    content,
+                },
+            );
 
             if (success) {
                 res.json({
@@ -56,7 +59,9 @@ class CommentController {
 
     static async deleteComment(req, res) {
         try {
-            const success = await CommentModel.delete(req.params.id);
+            const success = await CommentModel.deleteComment(
+                req.params.commentid,
+            );
 
             if (success) {
                 res.json({ message: '댓글이 성공적으로 삭제되었습니다.' });

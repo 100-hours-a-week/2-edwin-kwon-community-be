@@ -23,6 +23,14 @@ router.get('/users/:userid', userController.getUserById);
 
 router.get('/posts/:postid/comments', commentController.getCommentList);
 router.post('/posts/:postid/comments', commentController.createComment);
+router.put(
+    '/posts/:postid/comments/:commentid',
+    commentController.updateComment,
+);
+router.delete(
+    '/posts/:postid/comments/:commentid',
+    commentController.deleteComment,
+);
 
 router.get('/slow', getSlow);
 router.post('/test', postTest);
