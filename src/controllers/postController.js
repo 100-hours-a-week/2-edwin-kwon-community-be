@@ -1,4 +1,5 @@
 import PostModel from '../models/postModel.js';
+import LikeModel from '../models/likeModel.js';
 
 class PostController {
     static async getPostById(req, res) {
@@ -30,6 +31,52 @@ class PostController {
         } catch (error) {
             res.status(500).json({
                 error: '포스트 생성 중 오류가 발생했습니다.',
+            });
+        }
+    }
+
+    static async likePost(req, res) {
+        try {
+            const insertId = await LikeModel.createLike(req.params.postid);
+            const like = await LikeModel.getLike(req.params.postid);
+            const likeCnt = like.length;
+            res.status(201).json({
+                message: 'ok',
+                likeCnt,
+            });
+        } catch (error) {
+            res.status(500).json({
+                error: '좋아요 생성 중 오류가 발생했습니다.',
+            });
+        }
+    }
+
+    static async unlikePost(req, res) {
+        try {
+            const success = await LikeModel.deleteLike(req.params.postid);
+            const like = await LikeModel.getLike(req.params.postid);
+            const likeCnt = like.length;
+            res.status(201).json({
+                message: 'ok',
+                likeCnt,
+            });
+        } catch (error) {
+            res.status(500).json({
+                error: '좋아요 삭제 중 오류가 발생했습니다.',
+            });
+        }
+    }
+
+    static async getLike(req, res) {
+        try {
+            const like = await LikeModel.getLike(req.params.postid);
+            res.status(201).json({
+                message: 'ok',
+                data: like,
+            });
+        } catch (error) {
+            res.status(500).json({
+                error: '좋아요 조회 중 오류가 발생했습니다.',
             });
         }
     }

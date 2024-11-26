@@ -17,6 +17,9 @@ router.post('/posts', postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
 router.delete('/posts/:postid', postController.deletePost);
 router.put('/posts/:postid', postController.updatePost);
+router.get('/posts/:postid/like', postController.getLike);
+router.post('/posts/:postid/like', postController.likePost);
+router.delete('/posts/:postid/like', postController.unlikePost);
 
 router.get('/users', userController.getUserList);
 router.get('/users/:userid', userController.getUserById);
