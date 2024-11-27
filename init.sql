@@ -18,7 +18,8 @@ CREATE TABLE `member` (
 	`email`	VARCHAR(100)	NOT NULL,
 	`password`	VARCHAR(60)	NOT NULL,
 	`nickname`	VARCHAR(30)	NOT NULL,
-	`img`	VARCHAR(255)	NULL
+	`img`	VARCHAR(255)	NULL,
+	`created_at`	DATETIME	NOT NULL
 );
 
 DROP TABLE IF EXISTS `comment`;
@@ -57,11 +58,11 @@ MODIFY COLUMN `like_id` BIGINT NOT NULL AUTO_INCREMENT,
 ADD PRIMARY KEY (`like_id`);
 
 -- Member 테이블 데이터
-INSERT INTO `member` (`member_id`, `email`, `password`, `nickname`, `img`)
+INSERT INTO `member` (`member_id`, `email`, `password`, `nickname`, `img`, `created_at`)
 VALUES
-    (1, 'user1@example.com', 'hashedpassword1', 'UserOne', 'user1.jpg'),
-    (2, 'user2@example.com', 'hashedpassword2', 'UserTwo', 'user2.jpg'),
-    (3, 'user3@example.com', 'hashedpassword3', 'UserThree', NULL);
+    (1, 'user1@example.com', 'hashedpassword1', 'UserOne', 'user1.jpg', '2024-11-01 10:00:00'),
+    (2, 'user2@example.com', 'hashedpassword2', 'UserTwo', 'user2.jpg', '2024-11-02 11:00:00'),
+    (3, 'user3@example.com', 'hashedpassword3', 'UserThree', NULL, '2024-11-03 12:00:00');
 
 -- Post 테이블 데이터
 INSERT INTO `post` (`post_id`, `member_id`, `title`, `content`, `view_cnt`, `created_at`, `updated_at`, `img`)

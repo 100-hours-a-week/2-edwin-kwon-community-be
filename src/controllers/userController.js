@@ -18,11 +18,12 @@ class UserController {
 
     static async createUser(req, res) {
         try {
-            const { username, email, password } = req.body;
+            const { username, email, password, nickname } = req.body;
             const insertId = await UserModel.create({
                 username,
                 email,
                 password,
+                nickname,
             });
 
             res.status(201).json({ message: '사용자 생성 성공', id: insertId });

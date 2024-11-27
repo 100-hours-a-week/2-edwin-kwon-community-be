@@ -35,8 +35,8 @@ const userModel = {
     // 유저 생성
     async createUser({ username, email, password }) {
         const query = `
-            INSERT INTO users (username, email, password, created_at) 
-            VALUES (?, ?, ?, NOW())
+            INSERT INTO users (username, email, password, nickname, created_at) 
+            VALUES (?, ?, ?, ?, NOW())
         `;
         const [result] = await pool.query(query, [username, email, password]);
         return result.insertId; // 생성된 유저 ID 반환

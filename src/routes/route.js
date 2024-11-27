@@ -11,7 +11,7 @@ import userController from '../controllers/userController.js';
 import commentController from '../controllers/commentController.js';
 
 const router = express.Router();
-
+// post
 router.get('/posts', postController.getPostList);
 router.post('/posts', postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
@@ -21,9 +21,14 @@ router.get('/posts/:postid/like', postController.getLike);
 router.post('/posts/:postid/like', postController.likePost);
 router.delete('/posts/:postid/like', postController.unlikePost);
 
+// user, auth
 router.get('/users', userController.getUserList);
 router.get('/users/:userid', userController.getUserById);
+router.post('/auth/signup', userController.createUser);
+router.post('/auth/login', userController.login);
+router.post('/auth/logout', userController.logout);
 
+// comment
 router.get('/posts/:postid/comments', commentController.getCommentList);
 router.post('/posts/:postid/comments', commentController.createComment);
 router.put(
