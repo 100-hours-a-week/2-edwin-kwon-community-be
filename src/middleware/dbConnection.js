@@ -14,6 +14,12 @@ const pool = mysql.createPool({
     connectionLimit: 10,
 });
 
+/**
+ * 쿼리 로깅 함수
+ * @param {string} query - 실행된 SQL 쿼리
+ * @param {Array} params - 쿼리에 사용된 파라미터
+ * @param {Object|Array} result - 쿼리 결과
+ */
 const logQuery = (query, params, result) => {
     console.log(colors.gray('\n─────────────────────────────'));
     console.log(colors.yellow(`[${moment().format('YYYY-MM-DD HH:mm:ss')}]`));
@@ -33,14 +39,34 @@ const logQuery = (query, params, result) => {
     console.log(colors.gray('─────────────────────────────\n'));
 };
 
+// 기존 pool.query를 저장
+const originalPoolQuery = pool.query.bind(pool);
+
+/**
+ * pool.query를 래핑하여 로깅 기능 추가
+ * @param {string} query - 실행할 SQL 쿼리
+ * @param {Array} [params] - 쿼리에 사용될 파라미터
+ * @returns {Promise<Array>} - 쿼리 결과
+ */
+pool.query = async (query, params) => {
+    try {
+        const [rows] = await originalPoolQuery(query, params);
+        logQuery(query, params, rows);
+        return [rows];
+    } catch (error) {
+        console.error(colors.red('Query Error:'), error);
+        throw error;
+    }
+};
+
 const dbConnectionMiddleware = async (req, res, next) => {
     try {
         const connection = await pool.getConnection();
 
         const originalQuery = connection.query.bind(connection);
         connection.query = async (...args) => {
-            const [rows] = await originalQuery(...args); // 구조분해할당으로 rows만 가져오기
-            logQuery(args[0], args[1], rows); // rows 직접 전달
+            const [rows] = await originalQuery(...args);
+            logQuery(args[0], args[1], rows);
             return [rows];
         };
 
@@ -58,3 +84,4 @@ const dbConnectionMiddleware = async (req, res, next) => {
 };
 
 export default dbConnectionMiddleware;
+export { pool };

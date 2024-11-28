@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import postModel from '../models/postModel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,26 +39,17 @@ export const deleteTest = (req, res) => {
     return res.status(204).end();
 };
 
-export const dbTest = async (req, res) => {
-    try {
-        const [rows] = await req.db.query('SELECT * from Board');
-        res.json(rows);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
 export const findNicknamebyUserId = async (req, res) => {
     const userId = req.params.userid;
     try {
-        const user = await req.db.query(
-            'SELECT nickname FROM user WHERE user_id = ?;',
+        const userNickname = await req.db.query(
+            'SELECT nickname FROM member WHERE member_id = ?;',
             userId,
         );
-        if (user.length > 0) {
-            res.json({ nickname: user[0][0].nickname });
+        if (userNickname.length > 0) {
+            await res.json({ nickname: userNickname[0][0].nickname });
         } else {
-            res.status(404).json({ error: 'User not found' });
+            await res.status(404).json({ error: 'User not found' });
         }
     } catch (error) {
         console.error('Error fetching nickname:', error);
@@ -69,7 +61,7 @@ export const findUserbyUserId = async (req, res) => {
     const userId = req.params.userid;
     try {
         const user = await req.db.query(
-            'SELECT * FROM User WHERE user_id = ?;',
+            'SELECT * FROM member WHERE member_id = ?;',
             userId,
         );
         if (user.length > 0) {
@@ -88,7 +80,7 @@ export const findPostbyPostId = async (req, res) => {
     console.log('postId:', postId);
     try {
         const post = await req.db.query(
-            'SELECT * FROM Board WHERE board_id = ?;',
+            'SELECT * FROM post WHERE post_id = ?;',
             postId,
         );
         if (post.length > 0) {
