@@ -9,11 +9,12 @@ import {
 import postController from '../controllers/postController.js';
 import userController from '../controllers/userController.js';
 import commentController from '../controllers/commentController.js';
+import upload from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 // post
 router.get('/posts', postController.getPostList);
-router.post('/posts', postController.createPost);
+router.post('/posts', upload, postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
 router.delete('/posts/:postid', postController.deletePost);
 router.put('/posts/:postid', postController.updatePost);
@@ -24,9 +25,11 @@ router.delete('/posts/:postid/like', postController.unlikePost);
 // user, auth
 router.get('/users', userController.getUserList);
 router.get('/users/:userid', userController.getUserById);
-router.post('/auth/signup', userController.createUser);
-router.post('/auth/login', userController.login);
-router.post('/auth/logout', userController.logout);
+router.post('/auth/signup', upload, userController.createUser);
+router.get('/auth/check-nickname', userController.checkNickname);
+router.get('/auth/check-email', userController.checkEmail);
+// router.post('/auth/login', userController.login);
+// router.post('/auth/logout', userController.logout);
 
 // comment
 router.get('/posts/:postid/comments', commentController.getCommentList);

@@ -33,12 +33,19 @@ const userModel = {
     },
 
     // 유저 생성
-    async createUser({ username, email, password }) {
+    async createUser({ email, password, nickname, imgPath }) {
+        console.log(email, password, nickname, imgPath);
         const query = `
-            INSERT INTO users (username, email, password, nickname, created_at) 
+            INSERT INTO member (email, password, nickname, img, created_at) 
             VALUES (?, ?, ?, ?, NOW())
         `;
-        const [result] = await pool.query(query, [username, email, password]);
+        const [result] = await pool.query(query, [
+            email,
+            password,
+            nickname,
+            imgPath,
+        ]);
+        console.log(result);
         return result.insertId; // 생성된 유저 ID 반환
     },
 
@@ -63,6 +70,19 @@ const userModel = {
         const query = `DELETE FROM users WHERE id = ?`;
         const [result] = await pool.query(query, [userId]);
         return result.affectedRows > 0; // 삭제 성공 여부 반환
+    },
+
+    // 닉네임 중복 체크
+    async checkNickname(nickname) {
+        const query = `SELECT * FROM member WHERE nickname = ?`;
+        const [result] = await pool.query(query, [nickname]);
+        return result.length > 0; // 중복 여부 반환
+    },
+
+    async checkEmail(email) {
+        const query = `SELECT * FROM member WHERE email = ?`;
+        const [result] = await pool.query(query, [email]);
+        return result.length > 0; // 중복 여부 반환
     },
 };
 

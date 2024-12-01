@@ -18,16 +18,19 @@ class UserController {
 
     static async createUser(req, res) {
         try {
-            const { username, email, password, nickname } = req.body;
-            const insertId = await UserModel.create({
-                username,
+            const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
+            const { email, password, nickname } = req.body;
+
+            const insertId = await UserModel.createUser({
                 email,
                 password,
                 nickname,
+                imgPath,
             });
 
             res.status(201).json({ message: '사용자 생성 성공', id: insertId });
         } catch (error) {
+            console.error('User creation error:', error);
             res.status(500).json({
                 error: '사용자 생성 중 오류가 발생했습니다.',
             });
@@ -80,6 +83,26 @@ class UserController {
             res.status(500).json({
                 error: '사용자 목록을 가져오는 중 오류가 발생했습니다.',
             });
+        }
+    }
+
+    static async checkNickname(req, res) {
+        const { nickname } = req.query;
+        const isDuplicate = await UserModel.checkNickname(nickname);
+        if (isDuplicate) {
+            res.status(400).json({ error: '이미 사용 중인 닉네임입니다.' });
+        } else {
+            res.json({ message: '사용 가능한 닉네임입니다.' });
+        }
+    }
+
+    static async checkEmail(req, res) {
+        const { email } = req.query;
+        const isDuplicate = await UserModel.checkEmail(email);
+        if (isDuplicate) {
+            res.status(400).json({ error: '이미 사용 중인 이메일입니다.' });
+        } else {
+            res.json({ message: '사용 가능한 이메일입니다.' });
         }
     }
 }
