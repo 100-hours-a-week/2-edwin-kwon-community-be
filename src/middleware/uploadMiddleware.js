@@ -1,22 +1,23 @@
 import multer from 'multer';
 import path from 'path';
 
-// 파일 저장소 설정
-const storage = multer.diskStorage({
-    // 저장될 경로 설정
+// 파로필 이미지용 저장소 설정
+const profileStorage = multer.diskStorage({
     destination(req, file, cb) {
-        cb(null, 'public/uploads/'); // 'uploads' 폴더에 파일 저장
+        cb(null, 'public/uploads/profiles/'); // 프로필 이미지 저장 경로
     },
-    // 저장될 파일명 설정
     filename(req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(
-            null,
-            file.fieldname +
-                '-' +
-                uniqueSuffix +
-                path.extname(file.originalname),
-        );
+        cb(null, 'profile-' + Date.now() + path.extname(file.originalname));
+    },
+});
+
+// 게시글 이미지용 저장소 설정
+const postStorage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, 'public/uploads/posts/'); // 게시글 이미지 저장 경로
+    },
+    filename(req, file, cb) {
+        cb(null, 'post-' + Date.now() + path.extname(file.originalname));
     },
 });
 
@@ -32,14 +33,24 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// 업로드 설정
-const upload = multer({
-    storage,
+// 프로필 이미지 업로드 설정
+const uploadProfile = multer({
+    storage: profileStorage,
     fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024,
         files: 1,
     },
-}).single('profileImage');
+}).single('img');
 
-export default upload;
+// 게시글 이미지 업로드 설정
+const uploadPost = multer({
+    storage: postStorage,
+    fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+        files: 1,
+    },
+}).single('img');
+
+export { uploadProfile, uploadPost };
