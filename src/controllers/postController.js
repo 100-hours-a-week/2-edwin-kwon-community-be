@@ -21,7 +21,8 @@ class PostController {
 
     static async createPost(req, res) {
         try {
-            const { title, content, img } = req.body;
+            const { title, content } = req.body;
+            const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
             const insertId = await PostModel.createPost({
                 title,
                 content,
@@ -122,7 +123,6 @@ class PostController {
     }
 
     static async getPostList(req, res) {
-        console.log('getPostList');
         try {
             const postList = await PostModel.getPostList();
             res.json(postList);

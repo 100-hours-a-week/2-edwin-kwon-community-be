@@ -18,7 +18,9 @@ class UserController {
 
     static async createUser(req, res) {
         try {
-            const imgPath = req.file ? `/uploads/${req.file.filename}` : null;
+            const imgPath = req.file
+                ? `/uploads/profiles/${req.file.filename}`
+                : null;
             const { email, password, nickname } = req.body;
 
             const insertId = await UserModel.createUser({
