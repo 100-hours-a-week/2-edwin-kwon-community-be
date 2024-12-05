@@ -71,6 +71,34 @@ const postModel = {
         const [result] = await pool.query(query, [postId]);
         return result.affectedRows > 0; // 증가 성공 여부 반환
     },
+
+    // 댓글 수 증가
+    async increaseCommentCount(postId) {
+        const query = `UPDATE post SET comment_cnt = comment_cnt + 1 WHERE post_id = ?`;
+        const [result] = await pool.query(query, [postId]);
+        return result.affectedRows > 0; // 증가 성공 여부 반환
+    },
+
+    // 댓글 수 감소
+    async decreaseCommentCount(postId) {
+        const query = `UPDATE post SET comment_cnt = comment_cnt - 1 WHERE post_id = ?`;
+        const [result] = await pool.query(query, [postId]);
+        return result.affectedRows > 0; // 감소 성공 여부 반환
+    },
+
+    // 좋아요 수 증가
+    async increaseLikeCount(postId) {
+        const query = `UPDATE post SET like_cnt = like_cnt + 1 WHERE post_id = ?`;
+        const [result] = await pool.query(query, [postId]);
+        return result.affectedRows > 0; // 증가 성공 여부 반환
+    },
+
+    // 좋아요 수 감소
+    async decreaseLikeCount(postId) {
+        const query = `UPDATE post SET like_cnt = like_cnt - 1 WHERE post_id = ?`;
+        const [result] = await pool.query(query, [postId]);
+        return result.affectedRows > 0; // 감소 성공 여부 반환
+    },
 };
 
 export default postModel;

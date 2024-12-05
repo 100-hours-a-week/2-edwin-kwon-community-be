@@ -11,7 +11,7 @@ const userModel = {
                 u.email,
                 u.created_at,
                 u.updated_at
-            FROM users u
+            FROM member u
             ORDER BY u.user_id;
         `;
         const [rows] = await pool.query(query);
@@ -83,6 +83,19 @@ const userModel = {
         const query = `SELECT * FROM member WHERE email = ?`;
         const [result] = await pool.query(query, [email]);
         return result.length > 0; // 중복 여부 반환
+    },
+
+    // 로그인
+    async login(email, password) {
+        const query = `SELECT * FROM member WHERE email = ? AND password = ?`;
+        const [result] = await pool.query(query, [email, password]);
+        return result[0]; // 단일 유저 반환
+    },
+
+    async getImgByUserId(userId) {
+        const query = `SELECT img FROM member WHERE member_id = ?`;
+        const [result] = await pool.query(query, [userId]);
+        return result[0]; // 단일 유저(Return)
     },
 };
 

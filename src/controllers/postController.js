@@ -41,6 +41,7 @@ class PostController {
             const insertId = await LikeModel.createLike(req.params.postid);
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
+            await PostModel.increaseLikeCount(req.params.postid);
             res.status(201).json({
                 message: 'ok',
                 likeCnt,
@@ -57,6 +58,7 @@ class PostController {
             const success = await LikeModel.deleteLike(req.params.postid);
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
+            await PostModel.decreaseLikeCount(req.params.postid);
             res.status(201).json({
                 message: 'ok',
                 likeCnt,

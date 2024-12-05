@@ -1,5 +1,5 @@
 import CommentModel from '../models/commentModel.js';
-
+import PostModel from '../models/postModel.js';
 class CommentController {
     static async getCommentById(req, res) {
         try {
@@ -17,14 +17,13 @@ class CommentController {
     }
 
     static async createComment(req, res) {
-        console.log('createComment');
         try {
             const postId = req.params.postid;
             const { content } = req.body;
             const insertId = await CommentModel.createComment(postId, {
                 content,
             });
-
+            await PostModel.increaseCommentCount(postId);
             res.status(201).json({ message: '댓글 생성 성공', id: insertId });
         } catch (error) {
             res.status(500).json({
@@ -42,7 +41,6 @@ class CommentController {
                     content,
                 },
             );
-
             if (success) {
                 res.json({
                     message: '댓글이 성공적으로 업데이트되었습니다.',
@@ -64,6 +62,7 @@ class CommentController {
             );
 
             if (success) {
+                await PostModel.decreaseCommentCount(req.params.postid);
                 res.json({ message: '댓글이 성공적으로 삭제되었습니다.' });
             } else {
                 res.status(404).json({ error: '댓글을 찾을 수 없습니다.' });

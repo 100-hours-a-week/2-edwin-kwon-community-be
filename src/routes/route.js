@@ -10,26 +10,33 @@ import postController from '../controllers/postController.js';
 import userController from '../controllers/userController.js';
 import commentController from '../controllers/commentController.js';
 import { uploadProfile, uploadPost } from '../middleware/uploadMiddleware.js';
+import { isAuthenticated } from '../middleware/auth.js';
 
 const router = express.Router();
 // post
 router.get('/posts', postController.getPostList);
-router.post('/posts', uploadPost, postController.createPost);
+router.post('/posts', isAuthenticated, uploadPost, postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
-router.delete('/posts/:postid', postController.deletePost);
-router.put('/posts/:postid', postController.updatePost);
+router.delete('/posts/:postid', isAuthenticated, postController.deletePost);
+router.put('/posts/:postid', isAuthenticated, postController.updatePost);
 router.get('/posts/:postid/like', postController.getLike);
-router.post('/posts/:postid/like', postController.likePost);
-router.delete('/posts/:postid/like', postController.unlikePost);
+router.post('/posts/:postid/like', isAuthenticated, postController.likePost);
+router.delete(
+    '/posts/:postid/like',
+    isAuthenticated,
+    postController.unlikePost,
+);
 
 // user, auth
 router.get('/users', userController.getUserList);
-router.get('/users/:userid', userController.getUserById);
+router.get('/users/:usierid', userController.getUserById);
+router.get('/users/profile', isAuthenticated, userController.getProfile);
 router.post('/auth/signup', uploadProfile, userController.createUser);
 router.get('/auth/check-nickname', userController.checkNickname);
 router.get('/auth/check-email', userController.checkEmail);
-// router.post('/auth/login', userController.login);
-// router.post('/auth/logout', userController.logout);
+router.post('/auth/login', userController.login);
+router.get('/auth/img', isAuthenticated, userController.getProfileImg);
+router.post('/auth/logout', isAuthenticated, userController.logout);
 
 // comment
 router.get('/posts/:postid/comments', commentController.getCommentList);
