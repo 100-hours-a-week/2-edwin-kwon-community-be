@@ -13,6 +13,19 @@ import { uploadProfile, uploadPost } from '../middleware/uploadMiddleware.js';
 import { isAuthenticated } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// user, auth
+router.get('/users', userController.getUserList);
+router.get('/users/profile', isAuthenticated, userController.getProfile);
+router.get('/users/:userId', userController.getUserById);
+router.get('/auth/check-nickname', userController.checkNickname);
+router.get('/auth/check-email', userController.checkEmail);
+router.post('/auth/signup', uploadProfile, userController.createUser);
+router.post('/auth/login', userController.login);
+router.get('/auth/img', isAuthenticated, userController.getProfileImg);
+router.post('/auth/logout', isAuthenticated, userController.logout);
+router.put('/users', isAuthenticated, uploadProfile, userController.updateUser);
+
 // post
 router.get('/posts', postController.getPostList);
 router.post('/posts', isAuthenticated, uploadPost, postController.createPost);
@@ -26,17 +39,6 @@ router.delete(
     isAuthenticated,
     postController.unlikePost,
 );
-
-// user, auth
-router.get('/users', userController.getUserList);
-router.get('/users/:usierid', userController.getUserById);
-router.get('/users/profile', isAuthenticated, userController.getProfile);
-router.post('/auth/signup', uploadProfile, userController.createUser);
-router.get('/auth/check-nickname', userController.checkNickname);
-router.get('/auth/check-email', userController.checkEmail);
-router.post('/auth/login', userController.login);
-router.get('/auth/img', isAuthenticated, userController.getProfileImg);
-router.post('/auth/logout', isAuthenticated, userController.logout);
 
 // comment
 router.get('/posts/:postid/comments', commentController.getCommentList);

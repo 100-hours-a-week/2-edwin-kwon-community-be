@@ -50,19 +50,32 @@ const userModel = {
     },
 
     // 유저 업데이트
-    async updateUser(userId, { username, email, password }) {
+    async updateUser(userId, updates) {
+        // 업데이트할 필드와 값을 동적으로 생성
+        const setClause = [];
+        const values = [];
+
+        Object.entries(updates).forEach(([key, value]) => {
+            setClause.push(`${key} = ?`);
+            values.push(value);
+        });
+
+        // updated_at은 항상 업데이트
+        //setClause.push('updated_at = NOW()');
+
+        // userId를 values 배열의 마지막에 추가
+        values.push(userId);
+
         const query = `
-            UPDATE users 
-            SET username = ?, email = ?, password = ?, updated_at = NOW() 
-            WHERE id = ?
+            UPDATE member 
+            SET ${setClause.join(', ')}
+            WHERE member_id = ?
         `;
-        const [result] = await pool.query(query, [
-            username,
-            email,
-            password,
-            userId,
-        ]);
-        return result.affectedRows > 0; // 업데이트 성공 여부 반환
+
+        console.log(query, values);
+
+        const [result] = await pool.query(query, values);
+        return result.affectedRows > 0;
     },
 
     // 유저 삭제
