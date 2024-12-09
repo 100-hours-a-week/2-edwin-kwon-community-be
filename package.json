@@ -9,8 +9,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "start": "node ./src/index.js",
-    "dev": "nodemon --inspect ./src/index.js"
+    "start": "node ./src/app.js",
+    "dev": "nodemon --inspect ./src/app.js"
   },
   "author": "edwin",
   "license": "ISC",
