@@ -1,4 +1,6 @@
 import express from 'express';
+
+// controller1
 import {
     getSlow,
     postTest,
@@ -9,8 +11,11 @@ import {
 import postController from '../controllers/postController.js';
 import userController from '../controllers/userController.js';
 import commentController from '../controllers/commentController.js';
+
+// middleware
 import { uploadProfile, uploadPost } from '../middleware/uploadMiddleware.js';
-import { isAuthenticated } from '../middleware/auth.js';
+import isAuthenticated from '../middleware/auth.js';
+import isValidPassword from '../middleware/passwordPolicy.js';
 
 const router = express.Router();
 
@@ -20,10 +25,22 @@ router.get('/users/profile', isAuthenticated, userController.getProfile);
 router.get('/users/:userId', userController.getUserById);
 router.get('/auth/check-nickname', userController.checkNickname);
 router.get('/auth/check-email', userController.checkEmail);
-router.post('/auth/signup', uploadProfile, userController.createUser);
-router.post('/auth/login', userController.login);
+router.post(
+    '/auth/signup',
+    isValidPassword,
+    uploadProfile,
+    userController.createUser,
+);
+router.post('/auth/login', isValidPassword, userController.login);
 router.get('/auth/img', isAuthenticated, userController.getProfileImg);
 router.post('/auth/logout', isAuthenticated, userController.logout);
+router.put(
+    '/users/password',
+    isAuthenticated,
+    isValidPassword,
+    userController.updatePassword,
+);
+router.delete('/users', isAuthenticated, userController.deleteUser);
 router.put('/users', isAuthenticated, uploadProfile, userController.updateUser);
 
 // post

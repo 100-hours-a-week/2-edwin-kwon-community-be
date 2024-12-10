@@ -110,6 +110,12 @@ const userModel = {
         const [result] = await pool.query(query, [userId]);
         return result[0]; // 단일 유저(Return)
     },
+
+    async updatePassword(userId, password) {
+        const query = `UPDATE member SET password = ? WHERE member_id = ?`;
+        const [result] = await pool.query(query, [password, userId]);
+        return result.affectedRows > 0;
+    },
 };
 
 export default userModel;

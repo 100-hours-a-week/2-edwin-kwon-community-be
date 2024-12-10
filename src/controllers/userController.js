@@ -7,7 +7,7 @@ class UserController {
             const user = await UserModel.getUserById(userId);
 
             if (user) {
-                res.json(user);
+                res.json({ message: 'ok' });
             } else {
                 res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
             }
@@ -30,7 +30,7 @@ class UserController {
                 imgPath,
             });
 
-            res.status(201).json({ message: '사용자 생성 성공', id: insertId });
+            res.status(201).json({ message: 'ok', id: insertId });
         } catch (error) {
             console.error('User creation error:', error);
             res.status(500).json({
@@ -70,7 +70,7 @@ class UserController {
 
             if (success) {
                 return res.json({
-                    message: '사용자 정보가 성공적으로 업데이트되었습니다.',
+                    message: 'ok',
                 });
             }
             return res
@@ -88,7 +88,7 @@ class UserController {
             const success = await UserModel.delete(req.params.id);
 
             if (success) {
-                res.json({ message: '사용자가 성공적으로 삭제되었습니다.' });
+                res.json({ message: 'ok' });
             } else {
                 res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
             }
@@ -116,7 +116,7 @@ class UserController {
         if (isDuplicate) {
             res.status(400).json({ error: '이미 사용 중인 닉네임입니다.' });
         } else {
-            res.json({ message: '사용 가능한 닉네임입니다.' });
+            res.json({ message: 'ok' });
         }
     }
 
@@ -126,7 +126,7 @@ class UserController {
         if (isDuplicate) {
             res.status(400).json({ error: '이미 사용 중인 이메일입니다.' });
         } else {
-            res.json({ message: '사용 가능한 이메일입니다.' });
+            res.json({ message: 'ok' });
         }
     }
 
@@ -142,7 +142,7 @@ class UserController {
             console.log('세션 ID:', req.sessionID);
             console.log('세션 데이터:', req.session);
 
-            res.json({ message: '로그인 성공' });
+            res.json({ message: 'ok' });
         } else {
             res.status(401).json({
                 error: '이메일 또는 비밀번호가 일치하지 않습니다.',
@@ -158,7 +158,7 @@ class UserController {
                     .status(500)
                     .json({ error: '로그아웃 처리 중 오류가 발생했습니다.' });
             }
-            res.json({ message: '로그아웃 성공' });
+            res.json({ message: 'ok' });
         });
     }
 
@@ -200,6 +200,30 @@ class UserController {
             });
         } catch (error) {
             return res.status(500).json({ error: error.message });
+        }
+    }
+
+    static async updatePassword(req, res) {
+        try {
+            // 인증 상태 확인
+            if (!req.session || !req.session.userId) {
+                return res.status(401).json({ error: '로그인이 필요합니다.' });
+            }
+
+            // 세션에서 userId 가져오기
+            const userId = req.session.userId;
+            const { password } = req.body;
+
+            const success = await UserModel.updatePassword(userId, password);
+            if (success) {
+                res.json({ message: '비밀번호가 성공적으로 업데이트된니다.' });
+            } else {
+                res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+            }
+        } catch (error) {
+            res.status(500).json({
+                error: '사용자 정보 업데이트 중 오류가 발생했습니다.',
+            });
         }
     }
 }
