@@ -21,7 +21,8 @@ class PostController {
 
     static async createPost(req, res) {
         try {
-            const { title, content, img } = req.body;
+            const { title, content } = req.body;
+            const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
             const insertId = await PostModel.createPost({
                 title,
                 content,
@@ -40,6 +41,7 @@ class PostController {
             const insertId = await LikeModel.createLike(req.params.postid);
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
+            await PostModel.increaseLikeCount(req.params.postid);
             res.status(201).json({
                 message: 'ok',
                 likeCnt,
@@ -56,6 +58,7 @@ class PostController {
             const success = await LikeModel.deleteLike(req.params.postid);
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
+            await PostModel.decreaseLikeCount(req.params.postid);
             res.status(201).json({
                 message: 'ok',
                 likeCnt,
@@ -122,7 +125,6 @@ class PostController {
     }
 
     static async getPostList(req, res) {
-        console.log('getPostList');
         try {
             const postList = await PostModel.getPostList();
             res.json(postList);
