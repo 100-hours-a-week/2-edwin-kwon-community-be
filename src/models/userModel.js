@@ -80,7 +80,7 @@ const userModel = {
 
     // 유저 삭제
     async deleteUser(userId) {
-        const query = `DELETE FROM users WHERE id = ?`;
+        const query = `DELETE FROM member WHERE member_id = ?`;
         const [result] = await pool.query(query, [userId]);
         return result.affectedRows > 0; // 삭제 성공 여부 반환
     },

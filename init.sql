@@ -60,7 +60,7 @@ ADD PRIMARY KEY (`like_id`);
 -- Member 테이블 데이터
 INSERT INTO `member` (`member_id`, `email`, `password`, `nickname`, `img`, `created_at`)
 VALUES
-    (1, 'user1@example.com', 'hashedpassword1', 'UserOne', 'user1.jpg', '2024-11-01 10:00:00'),
+    (1, '탈퇴회원', '탈퇴회원', '탈퇴회원', '/uploads/profiles/default.jpg', '2024-11-01 10:00:00'),
     (2, 'user2@example.com', 'hashedpassword2', 'UserTwo', 'user2.jpg', '2024-11-02 11:00:00'),
     (3, 'user3@example.com', 'hashedpassword3', 'UserThree', NULL, '2024-11-03 12:00:00');
 

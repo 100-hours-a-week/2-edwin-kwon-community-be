@@ -59,13 +59,19 @@ router.delete(
 
 // comment
 router.get('/posts/:postid/comments', commentController.getCommentList);
-router.post('/posts/:postid/comments', commentController.createComment);
+router.post(
+    '/posts/:postid/comments',
+    isAuthenticated,
+    commentController.createComment,
+);
 router.put(
     '/posts/:postid/comments/:commentid',
+    isAuthenticated,
     commentController.updateComment,
 );
 router.delete(
     '/posts/:postid/comments/:commentid',
+    isAuthenticated,
     commentController.deleteComment,
 );
 

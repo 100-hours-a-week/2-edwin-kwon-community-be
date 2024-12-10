@@ -41,11 +41,6 @@ class UserController {
 
     static async updateUser(req, res) {
         try {
-            // 인증 상태 확인
-            if (!req.session || !req.session.userId) {
-                return res.status(401).json({ error: '로그인이 필요합니다.' });
-            }
-
             const updates = {};
 
             // 닉네임 업데이트가 있는 경우
@@ -85,7 +80,27 @@ class UserController {
 
     static async deleteUser(req, res) {
         try {
-            const success = await UserModel.delete(req.params.id);
+            const userId = req.session.userId;
+
+            const success = await UserModel.deleteUser(userId);
+            req.session.destroy(err => {
+                if (err) {
+                    return res.status(500).json({
+                        error: '로그아웃 처리 중 오류가 발생했습니다.',
+                    });
+                }
+                res.json({ message: 'ok' });
+            });
+
+            // 게시글 댓글 회원 탈퇴로 변경
+            await req.db.query(
+                'UPDATE post SET member_id = 1 WHERE member_id = ?;',
+                userId,
+            );
+            await req.db.query(
+                'UPDATE comment SET member_id = 1 WHERE member_id = ?;',
+                userId,
+            );
 
             if (success) {
                 res.json({ message: 'ok' });
@@ -216,7 +231,7 @@ class UserController {
 
             const success = await UserModel.updatePassword(userId, password);
             if (success) {
-                res.json({ message: '비밀번호가 성공적으로 업데이트된니다.' });
+                res.json({ message: 'ok' });
             } else {
                 res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
             }
