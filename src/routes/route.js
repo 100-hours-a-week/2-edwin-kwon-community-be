@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 
 // controller1
 import {
@@ -20,15 +21,14 @@ import isValidPassword from '../middleware/passwordPolicy.js';
 const router = express.Router();
 
 // user, auth
-router.get('/users', userController.getUserList);
 router.get('/users/profile', isAuthenticated, userController.getProfile);
 router.get('/users/:userId', userController.getUserById);
 router.get('/auth/check-nickname', userController.checkNickname);
 router.get('/auth/check-email', userController.checkEmail);
 router.post(
     '/auth/signup',
-    isValidPassword,
     uploadProfile,
+    isValidPassword,
     userController.createUser,
 );
 router.post('/auth/login', isValidPassword, userController.login);

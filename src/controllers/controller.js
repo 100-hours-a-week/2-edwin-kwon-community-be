@@ -77,7 +77,6 @@ export const findUserbyUserId = async (req, res) => {
 
 export const findPostbyPostId = async (req, res) => {
     const postId = req.params.postid;
-    console.log('postId:', postId);
     try {
         const post = await req.db.query(
             'SELECT * FROM post WHERE post_id = ?;',

@@ -21,9 +21,11 @@ class PostController {
 
     static async createPost(req, res) {
         try {
+            const memberId = req.session.userId;
             const { title, content } = req.body;
+
             const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
-            const insertId = await PostModel.createPost({
+            const insertId = await PostModel.createPost(memberId, {
                 title,
                 content,
                 img,
@@ -38,7 +40,11 @@ class PostController {
 
     static async likePost(req, res) {
         try {
-            const insertId = await LikeModel.createLike(req.params.postid);
+            const userId = req.session.userId;
+            const insertId = await LikeModel.createLike(
+                userId,
+                req.params.postid,
+            );
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
             await PostModel.increaseLikeCount(req.params.postid);
@@ -55,7 +61,11 @@ class PostController {
 
     static async unlikePost(req, res) {
         try {
-            const success = await LikeModel.deleteLike(req.params.postid);
+            const userId = req.session.userId;
+            const success = await LikeModel.deleteLike(
+                userId,
+                req.params.postid,
+            );
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
             await PostModel.decreaseLikeCount(req.params.postid);
@@ -85,14 +95,18 @@ class PostController {
     }
 
     static async updatePost(req, res) {
-        console.log('updatePost');
         try {
+            const userId = req.session.userId;
             const { title, content, img } = req.body;
-            const success = await PostModel.updatePost(req.params.postid, {
-                title,
-                content,
-                img,
-            });
+            const success = await PostModel.updatePost(
+                userId,
+                req.params.postid,
+                {
+                    title,
+                    content,
+                    img,
+                },
+            );
 
             if (success) {
                 res.json({
@@ -110,7 +124,11 @@ class PostController {
 
     static async deletePost(req, res) {
         try {
-            const success = await PostModel.deletePost(req.params.postid);
+            const userId = req.session.userId;
+            const success = await PostModel.deletePost(
+                userId,
+                req.params.postid,
+            );
 
             if (success) {
                 res.json({ message: '포스트가 성공적으로 삭제되었습니다.' });

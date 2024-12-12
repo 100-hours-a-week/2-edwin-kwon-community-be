@@ -18,9 +18,10 @@ class CommentController {
 
     static async createComment(req, res) {
         try {
+            const userId = req.session.userId;
             const postId = req.params.postid;
             const { content } = req.body;
-            const insertId = await CommentModel.createComment(postId, {
+            const insertId = await CommentModel.createComment(userId, postId, {
                 content,
             });
             await PostModel.increaseCommentCount(postId);
@@ -34,8 +35,10 @@ class CommentController {
 
     static async updateComment(req, res) {
         try {
+            const userId = req.session.userId;
             const { content } = req.body;
             const success = await CommentModel.updateComment(
+                userId,
                 req.params.commentid,
                 {
                     content,
@@ -57,7 +60,9 @@ class CommentController {
 
     static async deleteComment(req, res) {
         try {
+            const userId = req.session.userId;
             const success = await CommentModel.deleteComment(
+                userId,
                 req.params.commentid,
             );
 

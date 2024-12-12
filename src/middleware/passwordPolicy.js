@@ -1,6 +1,16 @@
 export const isValidPassword = (req, res, next) => {
-    console.log(req);
-    const { password } = req.body;
+    let password;
+
+    // FormData 또는 JSON 요청에서 비밀번호 추출
+    if (req.is('multipart/form-data')) {
+        password = req.body.password;
+    } else {
+        password = req.body.password;
+    }
+
+    // 디버깅을 위한 로그
+    console.log('Password received:', password);
+
     if (!password) {
         return res.status(400).json({ message: '비밀번호를 입력해주세요.' });
     }
