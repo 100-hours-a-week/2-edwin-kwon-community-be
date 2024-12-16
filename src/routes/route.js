@@ -48,7 +48,12 @@ router.get('/posts', postController.getPostList);
 router.post('/posts', isAuthenticated, uploadPost, postController.createPost);
 router.get('/posts/:postid', postController.getPostById);
 router.delete('/posts/:postid', isAuthenticated, postController.deletePost);
-router.put('/posts/:postid', isAuthenticated, postController.updatePost);
+router.put(
+    '/posts/:postid',
+    isAuthenticated,
+    uploadPost,
+    postController.updatePost,
+);
 router.get('/posts/:postid/like', postController.getLike);
 router.post('/posts/:postid/like', isAuthenticated, postController.likePost);
 router.delete(

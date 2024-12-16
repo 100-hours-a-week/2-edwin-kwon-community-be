@@ -97,7 +97,9 @@ class PostController {
     static async updatePost(req, res) {
         try {
             const userId = req.session.userId;
-            const { title, content, img } = req.body;
+            const { title, content } = req.body;
+            const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
+            console.log('img', img);
             const success = await PostModel.updatePost(
                 userId,
                 req.params.postid,

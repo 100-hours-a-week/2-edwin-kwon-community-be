@@ -93,6 +93,7 @@ class UserController {
                 }
                 res.json({ message: 'ok' });
             });
+            res.clearCookie('sessionId');
 
             // 게시글 댓글 회원 탈퇴로 변경
             await req.db.query(
@@ -164,6 +165,7 @@ class UserController {
                     .status(500)
                     .json({ error: '로그아웃 처리 중 오류가 발생했습니다.' });
             }
+            res.clearCookie('sessionId');
             res.json({ message: 'ok' });
         });
     }
