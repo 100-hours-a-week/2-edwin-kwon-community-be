@@ -3,11 +3,12 @@ import UserModel from '../models/userModel.js';
 class UserController {
     static async getUserById(req, res) {
         try {
-            const userId = req.params.userid;
+            const userId = req.params.userId;
+            console.log('userId', userId);
             const user = await UserModel.getUserById(userId);
 
             if (user) {
-                res.json({ message: 'ok' });
+                res.json(user);
             } else {
                 res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
             }
