@@ -11,9 +11,12 @@
 
 <br />
 
+## Front-Side
+[Front_Github](https://github.com/100-hours-a-week/2-edwin-kwon-community-fe)
+
 ## 📝 Description
 
-게시판 기능을 제공하는 서버입니다. Express.js와 MariaDB를 기반으로 구현되었으며, 사용자 인증, 게시글 관리, 댓글, 좋아요 등 다양한 기능을 제공합니다.
+코코아에서 게시판 기능을 제공하는 서버입니다. Express.js와 MariaDB를 기반으로 구현되었으며, 사용자 인증, 게시글 관리, 댓글, 좋아요 등 다양한 기능을 제공합니다.
 
 ## 👨‍💻 Developer
 

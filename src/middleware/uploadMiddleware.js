@@ -38,7 +38,7 @@ const uploadProfile = multer({
     storage: profileStorage,
     fileFilter,
     limits: {
-        fileSize: 15 * 1024 * 1024,
+        fileSize: 150 * 1024 * 1024,
         files: 1,
     },
 }).single('img');
@@ -48,7 +48,7 @@ const uploadPost = multer({
     storage: postStorage,
     fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024,
+        fileSize: 150 * 1024 * 1024,
         files: 1,
     },
 }).single('img');

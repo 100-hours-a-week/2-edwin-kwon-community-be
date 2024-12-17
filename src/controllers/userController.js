@@ -1,4 +1,6 @@
 import UserModel from '../models/userModel.js';
+import fs from 'fs';
+import path from 'path';
 
 class UserController {
     static async getUserById(req, res) {
@@ -84,6 +86,17 @@ class UserController {
         try {
             const userId = req.session.userId;
 
+            // 사용자 정보를 먼저 가져와서 이미지 경로 확인
+            const user = await UserModel.getUserById(userId);
+
+            // 이미지 파일 삭제 처리
+            if (user && user.img) {
+                const imagePath = path.join(process.cwd(), 'public', user.img);
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            }
+
             const success = await UserModel.deleteUser(userId);
             req.session.destroy(err => {
                 if (err) {
@@ -91,7 +104,6 @@ class UserController {
                         error: '로그아웃 처리 중 오류가 발생했습니다.',
                     });
                 }
-                res.json({ message: 'ok' });
             });
             res.clearCookie('sessionId');
 
