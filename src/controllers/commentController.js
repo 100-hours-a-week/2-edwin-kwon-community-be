@@ -1,7 +1,8 @@
 import CommentModel from '../models/commentModel.js';
 import PostModel from '../models/postModel.js';
-class CommentController {
-    static async getCommentById(req, res) {
+
+const CommentController = {
+    async getCommentById(req, res) {
         try {
             const commentId = req.params.commentid;
             const comment = await CommentModel.getCommentById(commentId);
@@ -14,13 +15,14 @@ class CommentController {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async createComment(req, res) {
+    async createComment(req, res) {
         try {
+            const userId = req.session.userId;
             const postId = req.params.postid;
             const { content } = req.body;
-            const insertId = await CommentModel.createComment(postId, {
+            const insertId = await CommentModel.createComment(userId, postId, {
                 content,
             });
             await PostModel.increaseCommentCount(postId);
@@ -30,12 +32,14 @@ class CommentController {
                 error: '댓글 생성 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async updateComment(req, res) {
+    async updateComment(req, res) {
         try {
+            const userId = req.session.userId;
             const { content } = req.body;
             const success = await CommentModel.updateComment(
+                userId,
                 req.params.commentid,
                 {
                     content,
@@ -53,11 +57,13 @@ class CommentController {
                 error: '댓글 업데이트 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async deleteComment(req, res) {
+    async deleteComment(req, res) {
         try {
+            const userId = req.session.userId;
             const success = await CommentModel.deleteComment(
+                userId,
                 req.params.commentid,
             );
 
@@ -72,9 +78,9 @@ class CommentController {
                 error: '댓글 삭제 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async getCommentList(req, res) {
+    async getCommentList(req, res) {
         try {
             const postId = req.params.postid;
             const commentList =
@@ -85,7 +91,7 @@ class CommentController {
                 error: '댓글 목록을 가져오는 중 오류가 발생했습니다.',
             });
         }
-    }
-}
+    },
+};
 
 export default CommentController;

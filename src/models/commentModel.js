@@ -21,30 +21,30 @@ const commentModel = {
     },
 
     // 댓글 생성
-    async createComment(postId, { content }) {
+    async createComment(userId, postId, { content }) {
         const query = `
             INSERT INTO comment (post_id, content, member_id, created_at) 
-            VALUES (?, ?, 1, NOW())
+            VALUES (?, ?, ?, NOW())
         `;
-        const [result] = await pool.query(query, [postId, content]);
+        const [result] = await pool.query(query, [postId, content, userId]);
         return result.insertId; // 생성된 댓글 ID 반환
     },
 
     // 댓글 업데이트
-    async updateComment(commentId, { content }) {
+    async updateComment(userId, commentId, { content }) {
         const query = `
             UPDATE comment 
             SET content = ?, created_at = NOW() 
-            WHERE comment_id = ?
+            WHERE comment_id = ? AND member_id = ?
         `;
-        const [result] = await pool.query(query, [content, commentId]);
+        const [result] = await pool.query(query, [content, commentId, userId]);
         return result.affectedRows > 0; // 업데이트 성공 여부 반환
     },
 
     // 댓글 삭제
-    async deleteComment(commentId) {
-        const query = `DELETE FROM comment WHERE comment_id = ?`;
-        const [result] = await pool.query(query, [commentId]);
+    async deleteComment(userId, commentId) {
+        const query = `DELETE FROM comment WHERE comment_id = ? AND member_id = ?`;
+        const [result] = await pool.query(query, [commentId, userId]);
         return result.affectedRows > 0; // 삭제 성공 여부 반환
     },
 };

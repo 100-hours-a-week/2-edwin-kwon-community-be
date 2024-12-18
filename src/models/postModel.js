@@ -37,31 +37,36 @@ const postModel = {
     },
 
     // 게시물 생성
-    async createPost({ title, content, img }) {
-        // 임시로 1번 유저로 생성
+    async createPost(userId, { title, content, img }) {
         const query = `
       INSERT INTO post (title, content, img, created_at, updated_at, member_id, like_cnt, comment_cnt, view_cnt)
-      VALUES (?, ?, ?, NOW(), NOW(), 1, 0, 0, 0)
+      VALUES (?, ?, ?, NOW(), NOW(), ?, 0, 0, 0)
     `;
-        const [result] = await pool.query(query, [title, content, img]);
+        const [result] = await pool.query(query, [title, content, img, userId]);
         return result.insertId; // 생성된 게시물 ID 반환
     },
 
     // 게시물 업데이트
-    async updatePost(postId, { title, content, img }) {
+    async updatePost(userId, postId, { title, content, img }) {
         const query = `
       UPDATE post 
       SET title = ?, content = ?, img = ?, updated_at = NOW() 
-      WHERE post_id = ?
+      WHERE post_id = ? AND member_id = ?
     `;
-        const [result] = await pool.query(query, [title, content, img, postId]);
+        const [result] = await pool.query(query, [
+            title,
+            content,
+            img,
+            postId,
+            userId,
+        ]);
         return result.affectedRows > 0; // 업데이트 성공 여부 반환
     },
 
     // 게시물 삭제
-    async deletePost(postId) {
-        const query = `DELETE FROM post WHERE post_id = ?`;
-        const [result] = await pool.query(query, [postId]);
+    async deletePost(userId, postId) {
+        const query = `DELETE FROM post WHERE post_id = ? AND member_id = ?`;
+        const [result] = await pool.query(query, [postId, userId]);
         return result.affectedRows > 0; // 삭제 성공 여부 반환
     },
 

@@ -1,27 +1,34 @@
 import UserModel from '../models/userModel.js';
+import fs from 'fs';
+import path from 'path';
 
-class UserController {
-    static async getUserById(req, res) {
+const UserController = {
+    async getUserById(req, res) {
         try {
-            const userId = req.params.userid;
+            const userId = req.params.userId;
+            console.log('userId', userId);
             const user = await UserModel.getUserById(userId);
 
             if (user) {
-                res.json({ message: 'ok' });
+                res.json(user);
             } else {
                 res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
             }
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async createUser(req, res) {
+    async createUser(req, res) {
         try {
             const imgPath = req.file
                 ? `/uploads/profiles/${req.file.filename}`
                 : null;
             const { email, password, nickname } = req.body;
+
+            console.log('email:', email);
+            console.log('password:', password);
+            console.log('nickname:', nickname);
 
             const insertId = await UserModel.createUser({
                 email,
@@ -37,9 +44,9 @@ class UserController {
                 error: '사용자 생성 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async updateUser(req, res) {
+    async updateUser(req, res) {
         try {
             const updates = {};
 
@@ -53,11 +60,8 @@ class UserController {
                 updates.img = `/uploads/profiles/${req.file.filename}`;
             }
 
-            console.log(updates);
-
             // 세션에서 userId 가져오기
             const userId = req.session.userId;
-            console.log(userId);
 
             const success = await UserModel.updateUser(userId, {
                 ...updates,
@@ -76,11 +80,22 @@ class UserController {
                 error: '사용자 정보 업데이트 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async deleteUser(req, res) {
+    async deleteUser(req, res) {
         try {
             const userId = req.session.userId;
+
+            // 사용자 정보를 먼저 가져와서 이미지 경로 확인
+            const user = await UserModel.getUserById(userId);
+
+            // 이미지 파일 삭제 처리
+            if (user && user.img) {
+                const imagePath = path.join(process.cwd(), 'public', user.img);
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            }
 
             const success = await UserModel.deleteUser(userId);
             req.session.destroy(err => {
@@ -89,8 +104,8 @@ class UserController {
                         error: '로그아웃 처리 중 오류가 발생했습니다.',
                     });
                 }
-                res.json({ message: 'ok' });
             });
+            res.clearCookie('sessionId');
 
             // 게시글 댓글 회원 탈퇴로 변경
             await req.db.query(
@@ -112,20 +127,9 @@ class UserController {
                 error: '사용자 삭제 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async getUserList(req, res) {
-        try {
-            const userList = await UserModel.getUserList();
-            res.json(userList);
-        } catch (error) {
-            res.status(500).json({
-                error: '사용자 목록을 가져오는 중 오류가 발생했습니다.',
-            });
-        }
-    }
-
-    static async checkNickname(req, res) {
+    async checkNickname(req, res) {
         const { nickname } = req.query;
         const isDuplicate = await UserModel.checkNickname(nickname);
         if (isDuplicate) {
@@ -133,9 +137,9 @@ class UserController {
         } else {
             res.json({ message: 'ok' });
         }
-    }
+    },
 
-    static async checkEmail(req, res) {
+    async checkEmail(req, res) {
         const { email } = req.query;
         const isDuplicate = await UserModel.checkEmail(email);
         if (isDuplicate) {
@@ -143,9 +147,9 @@ class UserController {
         } else {
             res.json({ message: 'ok' });
         }
-    }
+    },
 
-    static async login(req, res) {
+    async login(req, res) {
         const { email, password } = req.body;
         const user = await UserModel.login(email, password);
 
@@ -163,27 +167,23 @@ class UserController {
                 error: '이메일 또는 비밀번호가 일치하지 않습니다.',
             });
         }
-    }
+    },
 
     // 로그아웃 메서드 추가
-    static async logout(req, res) {
+    async logout(req, res) {
         req.session.destroy(err => {
             if (err) {
                 return res
                     .status(500)
                     .json({ error: '로그아웃 처리 중 오류가 발생했습니다.' });
             }
+            res.clearCookie('sessionId');
             res.json({ message: 'ok' });
         });
-    }
+    },
 
-    static async getProfileImg(req, res) {
+    async getProfileImg(req, res) {
         try {
-            // 인증 상태 확인
-            if (!req.session || !req.session.userId) {
-                return res.status(401).json({ error: '로그인이 필요합니다.' });
-            }
-            // 세션에서 userId 가져오기
             const userId = req.session.userId;
 
             const img = await UserModel.getImgByUserId(userId);
@@ -194,21 +194,13 @@ class UserController {
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async getProfile(req, res) {
+    async getProfile(req, res) {
         try {
-            // 인증 상태 확인
-            if (!req.session || !req.session.userId) {
-                return res.status(401).json({ error: '로그인이 필요합니다.' });
-            }
-
-            // 세션에서 userId 가져오기
             const userId = req.session.userId;
-
-            console.log(userId);
-
             const user = await UserModel.getUserById(userId);
+
             if (user) return res.json(user);
             return res.status(404).json({
                 error: '사용자를 찾을 수 없습니다.',
@@ -216,16 +208,10 @@ class UserController {
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async updatePassword(req, res) {
+    async updatePassword(req, res) {
         try {
-            // 인증 상태 확인
-            if (!req.session || !req.session.userId) {
-                return res.status(401).json({ error: '로그인이 필요합니다.' });
-            }
-
-            // 세션에서 userId 가져오기
             const userId = req.session.userId;
             const { password } = req.body;
 
@@ -240,7 +226,7 @@ class UserController {
                 error: '사용자 정보 업데이트 중 오류가 발생했습니다.',
             });
         }
-    }
-}
+    },
+};
 
 export default UserController;

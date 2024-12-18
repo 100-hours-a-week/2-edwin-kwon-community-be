@@ -2,22 +2,6 @@ import { pool } from '../middleware/dbConnection.js';
 
 // 유저 모델 객체
 const userModel = {
-    // 유저 목록 가져오기 (닉네임, 이메일 포함)
-    async getUserList() {
-        const query = `
-            SELECT 
-                u.user_id,
-                u.username,
-                u.email,
-                u.created_at,
-                u.updated_at
-            FROM member u
-            ORDER BY u.user_id;
-        `;
-        const [rows] = await pool.query(query);
-        return rows;
-    },
-
     // 모든 유저 가져오기
     async getAllUsers() {
         const query = `SELECT * FROM users ORDER BY created_at DESC`;
@@ -27,14 +11,13 @@ const userModel = {
 
     // 특정 ID의 유저 가져오기
     async getUserById(userId) {
-        const query = `SELECT * FROM member WHERE member_id = ?`;
+        const query = `SELECT member_id, email, nickname, img FROM member WHERE member_id = ?`;
         const [rows] = await pool.query(query, [userId]);
         return rows[0]; // 단일 유저 반환
     },
 
     // 유저 생성
     async createUser({ email, password, nickname, imgPath }) {
-        console.log(email, password, nickname, imgPath);
         const query = `
             INSERT INTO member (email, password, nickname, img, created_at) 
             VALUES (?, ?, ?, ?, NOW())
@@ -45,7 +28,6 @@ const userModel = {
             nickname,
             imgPath,
         ]);
-        console.log(result);
         return result.insertId; // 생성된 유저 ID 반환
     },
 
