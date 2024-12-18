@@ -1,8 +1,8 @@
 import PostModel from '../models/postModel.js';
 import LikeModel from '../models/likeModel.js';
 
-class PostController {
-    static async getPostById(req, res) {
+const PostController = {
+    async getPostById(req, res) {
         try {
             const postId = req.params.postid;
             const post = await PostModel.getPostById(postId);
@@ -17,9 +17,9 @@ class PostController {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async createPost(req, res) {
+    async createPost(req, res) {
         try {
             const memberId = req.session.userId;
             const { title, content } = req.body;
@@ -36,9 +36,9 @@ class PostController {
                 error: '포스트 생성 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async likePost(req, res) {
+    async likePost(req, res) {
         try {
             const userId = req.session.userId;
             const insertId = await LikeModel.createLike(
@@ -57,9 +57,9 @@ class PostController {
                 error: '좋아요 생성 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async unlikePost(req, res) {
+    async unlikePost(req, res) {
         try {
             const userId = req.session.userId;
             const success = await LikeModel.deleteLike(
@@ -78,9 +78,9 @@ class PostController {
                 error: '좋아요 삭제 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async getLike(req, res) {
+    async getLike(req, res) {
         try {
             const like = await LikeModel.getLike(req.params.postid);
             res.status(201).json({
@@ -92,9 +92,9 @@ class PostController {
                 error: '좋아요 조회 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async updatePost(req, res) {
+    async updatePost(req, res) {
         try {
             const userId = req.session.userId;
             const { title, content } = req.body;
@@ -122,9 +122,9 @@ class PostController {
                 error: '포스트 업데이트 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async deletePost(req, res) {
+    async deletePost(req, res) {
         try {
             const userId = req.session.userId;
             const success = await PostModel.deletePost(
@@ -142,9 +142,9 @@ class PostController {
                 error: '포스트 삭제 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async getPostList(req, res) {
+    async getPostList(req, res) {
         try {
             const postList = await PostModel.getPostList();
             res.json(postList);
@@ -153,7 +153,7 @@ class PostController {
                 error: '포스트 목록을 가져오는 중 오류가 발생했습니다.',
             });
         }
-    }
-}
+    },
+};
 
 export default PostController;

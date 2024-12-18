@@ -2,8 +2,8 @@ import UserModel from '../models/userModel.js';
 import fs from 'fs';
 import path from 'path';
 
-class UserController {
-    static async getUserById(req, res) {
+const UserController = {
+    async getUserById(req, res) {
         try {
             const userId = req.params.userId;
             console.log('userId', userId);
@@ -17,9 +17,9 @@ class UserController {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async createUser(req, res) {
+    async createUser(req, res) {
         try {
             const imgPath = req.file
                 ? `/uploads/profiles/${req.file.filename}`
@@ -44,9 +44,9 @@ class UserController {
                 error: '사용자 생성 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async updateUser(req, res) {
+    async updateUser(req, res) {
         try {
             const updates = {};
 
@@ -80,9 +80,9 @@ class UserController {
                 error: '사용자 정보 업데이트 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async deleteUser(req, res) {
+    async deleteUser(req, res) {
         try {
             const userId = req.session.userId;
 
@@ -127,9 +127,9 @@ class UserController {
                 error: '사용자 삭제 중 오류가 발생했습니다.',
             });
         }
-    }
+    },
 
-    static async checkNickname(req, res) {
+    async checkNickname(req, res) {
         const { nickname } = req.query;
         const isDuplicate = await UserModel.checkNickname(nickname);
         if (isDuplicate) {
@@ -137,9 +137,9 @@ class UserController {
         } else {
             res.json({ message: 'ok' });
         }
-    }
+    },
 
-    static async checkEmail(req, res) {
+    async checkEmail(req, res) {
         const { email } = req.query;
         const isDuplicate = await UserModel.checkEmail(email);
         if (isDuplicate) {
@@ -147,9 +147,9 @@ class UserController {
         } else {
             res.json({ message: 'ok' });
         }
-    }
+    },
 
-    static async login(req, res) {
+    async login(req, res) {
         const { email, password } = req.body;
         const user = await UserModel.login(email, password);
 
@@ -167,10 +167,10 @@ class UserController {
                 error: '이메일 또는 비밀번호가 일치하지 않습니다.',
             });
         }
-    }
+    },
 
     // 로그아웃 메서드 추가
-    static async logout(req, res) {
+    async logout(req, res) {
         req.session.destroy(err => {
             if (err) {
                 return res
@@ -180,9 +180,9 @@ class UserController {
             res.clearCookie('sessionId');
             res.json({ message: 'ok' });
         });
-    }
+    },
 
-    static async getProfileImg(req, res) {
+    async getProfileImg(req, res) {
         try {
             const userId = req.session.userId;
 
@@ -194,9 +194,9 @@ class UserController {
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async getProfile(req, res) {
+    async getProfile(req, res) {
         try {
             const userId = req.session.userId;
             const user = await UserModel.getUserById(userId);
@@ -208,9 +208,9 @@ class UserController {
         } catch (error) {
             return res.status(500).json({ error: error.message });
         }
-    }
+    },
 
-    static async updatePassword(req, res) {
+    async updatePassword(req, res) {
         try {
             const userId = req.session.userId;
             const { password } = req.body;
@@ -226,7 +226,7 @@ class UserController {
                 error: '사용자 정보 업데이트 중 오류가 발생했습니다.',
             });
         }
-    }
-}
+    },
+};
 
 export default UserController;

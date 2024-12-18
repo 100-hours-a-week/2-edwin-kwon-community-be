@@ -1,14 +1,6 @@
 import express from 'express';
 import multer from 'multer';
 
-// controller1
-import {
-    getSlow,
-    postTest,
-    putTest,
-    patchTest,
-    findNicknamebyUserId,
-} from '../controllers/controller.js';
 import postController from '../controllers/postController.js';
 import userController from '../controllers/userController.js';
 import commentController from '../controllers/commentController.js';
@@ -79,12 +71,5 @@ router.delete(
     isAuthenticated,
     commentController.deleteComment,
 );
-
-// test
-router.get('/slow', getSlow);
-router.post('/test', postTest);
-router.put('/test', putTest);
-router.patch('/test', patchTest);
-router.get('/user-nickname/:userid', findNicknamebyUserId);
 
 export default router;
