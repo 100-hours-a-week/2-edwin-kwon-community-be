@@ -21,7 +21,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: 'http://localhost:3000', // 허용할 도메인 설정 (모든 도메인 허용 시 '*')
+        origin: process.env.FRONTEND_URL, // 허용할 도메인 설정 (모든 도메인 허용 시 '*')
         credentials: true, // 쿠키 전송을 위해 필요
     }),
 );
