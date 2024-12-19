@@ -4,8 +4,9 @@ import PostModel from '../models/postModel.js';
 const CommentController = {
     async getCommentById(req, res) {
         try {
-            const commentId = req.params.commentid;
-            const comment = await CommentModel.getCommentById(commentId);
+            const comment = await CommentModel.getCommentById(
+                req.params.commentid,
+            );
 
             if (comment) {
                 res.json(comment);
@@ -19,13 +20,13 @@ const CommentController = {
 
     async createComment(req, res) {
         try {
-            const userId = req.session.userId;
-            const postId = req.params.postid;
             const { content } = req.body;
-            const insertId = await CommentModel.createComment(userId, postId, {
+            const insertId = await CommentModel.createComment(
+                req.session.userId,
+                req.params.postid,
                 content,
-            });
-            await PostModel.increaseCommentCount(postId);
+            );
+            await PostModel.increaseCommentCount(req.params.postid);
             res.status(201).json({ message: '댓글 생성 성공', id: insertId });
         } catch (error) {
             res.status(500).json({
@@ -36,14 +37,11 @@ const CommentController = {
 
     async updateComment(req, res) {
         try {
-            const userId = req.session.userId;
             const { content } = req.body;
             const success = await CommentModel.updateComment(
-                userId,
+                req.session.userId,
                 req.params.commentid,
-                {
-                    content,
-                },
+                content,
             );
             if (success) {
                 res.json({
@@ -61,9 +59,8 @@ const CommentController = {
 
     async deleteComment(req, res) {
         try {
-            const userId = req.session.userId;
             const success = await CommentModel.deleteComment(
-                userId,
+                req.session.userId,
                 req.params.commentid,
             );
 
@@ -82,9 +79,9 @@ const CommentController = {
 
     async getCommentList(req, res) {
         try {
-            const postId = req.params.postid;
-            const commentList =
-                await CommentModel.getCommentsListByPostId(postId);
+            const commentList = await CommentModel.getCommentsListByPostId(
+                req.params.postid,
+            );
             res.json(commentList);
         } catch (error) {
             res.status(500).json({

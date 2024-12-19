@@ -1,6 +1,4 @@
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import cors from 'cors';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -13,19 +11,12 @@ import {
 } from './middleware/securityMiddleware.js';
 import dbConnectionMiddleware from './middleware/dbConnection.js';
 import sessionConfig from './config/session.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const FRONTEND_URL = `http://${process.env.HOST}:3000`;
 
 const app = express();
 
 app.use(
     cors({
-        origin: `${FRONTEND_URL}`, // 허용할 도메인 설정 (모든 도메인 허용 시 '*')
+        origin: 'http://52.78.124.23:3000',
         credentials: true, // 쿠키 전송을 위해 필요
     }),
 );

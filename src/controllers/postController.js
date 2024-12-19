@@ -1,5 +1,7 @@
 import PostModel from '../models/postModel.js';
 import LikeModel from '../models/likeModel.js';
+import path from 'path';
+import fs from 'fs';
 
 const PostController = {
     async getPostById(req, res) {
@@ -40,11 +42,8 @@ const PostController = {
 
     async likePost(req, res) {
         try {
-            const userId = req.session.userId;
-            const insertId = await LikeModel.createLike(
-                userId,
-                req.params.postid,
-            );
+            await LikeModel.createLike(req.session.userId, req.params.postid);
+
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
             await PostModel.increaseLikeCount(req.params.postid);
@@ -61,11 +60,7 @@ const PostController = {
 
     async unlikePost(req, res) {
         try {
-            const userId = req.session.userId;
-            const success = await LikeModel.deleteLike(
-                userId,
-                req.params.postid,
-            );
+            await LikeModel.deleteLike(req.session.userId, req.params.postid);
             const like = await LikeModel.getLike(req.params.postid);
             const likeCnt = like.length;
             await PostModel.decreaseLikeCount(req.params.postid);
@@ -96,19 +91,14 @@ const PostController = {
 
     async updatePost(req, res) {
         try {
-            const userId = req.session.userId;
             const { title, content } = req.body;
             const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
-            console.log('img', img);
-            const success = await PostModel.updatePost(
-                userId,
-                req.params.postid,
-                {
-                    title,
-                    content,
-                    img,
-                },
-            );
+
+            const success = await PostModel.updatePost(req.params.postid, {
+                title,
+                content,
+                img,
+            });
 
             if (success) {
                 res.json({
@@ -126,17 +116,15 @@ const PostController = {
 
     async deletePost(req, res) {
         try {
-            const userId = req.session.userId;
-            const success = await PostModel.deletePost(
-                userId,
-                req.params.postid,
-            );
-
-            if (success) {
-                res.json({ message: '포스트가 성공적으로 삭제되었습니다.' });
-            } else {
-                res.status(404).json({ error: '포스트를 찾을 수 없습니다.' });
+            const post = await PostModel.getPostById(req.params.postid);
+            if (post && post.img) {
+                const imagePath = path.join(process.cwd(), 'public', post.img);
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
             }
+            await PostModel.deletePost(req.session.userId, req.params.postid);
+            res.json({ message: '포스트가 성공적으로 삭제되었습니다.' });
         } catch (error) {
             res.status(500).json({
                 error: '포스트 삭제 중 오류가 발생했습니다.',

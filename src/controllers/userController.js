@@ -5,9 +5,7 @@ import path from 'path';
 const UserController = {
     async getUserById(req, res) {
         try {
-            const userId = req.params.userId;
-            console.log('userId', userId);
-            const user = await UserModel.getUserById(userId);
+            const user = await UserModel.getUserById(req.params.userid);
 
             if (user) {
                 res.json(user);
@@ -25,10 +23,6 @@ const UserController = {
                 ? `/uploads/profiles/${req.file.filename}`
                 : null;
             const { email, password, nickname } = req.body;
-
-            console.log('email:', email);
-            console.log('password:', password);
-            console.log('nickname:', nickname);
 
             const insertId = await UserModel.createUser({
                 email,
@@ -60,10 +54,7 @@ const UserController = {
                 updates.img = `/uploads/profiles/${req.file.filename}`;
             }
 
-            // 세션에서 userId 가져오기
-            const userId = req.session.userId;
-
-            const success = await UserModel.updateUser(userId, {
+            const success = await UserModel.updateUser(req.session.userId, {
                 ...updates,
             });
 
@@ -84,10 +75,8 @@ const UserController = {
 
     async deleteUser(req, res) {
         try {
-            const userId = req.session.userId;
-
             // 사용자 정보를 먼저 가져와서 이미지 경로 확인
-            const user = await UserModel.getUserById(userId);
+            const user = await UserModel.getUserById(req.params.userid);
 
             // 이미지 파일 삭제 처리
             if (user && user.img) {
@@ -97,7 +86,7 @@ const UserController = {
                 }
             }
 
-            const success = await UserModel.deleteUser(userId);
+            const success = await UserModel.deleteUser(req.params.userid);
             req.session.destroy(err => {
                 if (err) {
                     return res.status(500).json({
@@ -110,11 +99,11 @@ const UserController = {
             // 게시글 댓글 회원 탈퇴로 변경
             await req.db.query(
                 'UPDATE post SET member_id = 1 WHERE member_id = ?;',
-                userId,
+                req.params.userid,
             );
             await req.db.query(
                 'UPDATE comment SET member_id = 1 WHERE member_id = ?;',
-                userId,
+                req.params.userid,
             );
 
             if (success) {
@@ -184,9 +173,8 @@ const UserController = {
 
     async getProfileImg(req, res) {
         try {
-            const userId = req.session.userId;
-
-            const img = await UserModel.getImgByUserId(userId);
+            const img = await UserModel.getImgByUserId(req.params.userid);
+            const img = await UserModel.getImgByUserId(req.params.userid);
             if (img) return res.json(img);
             return res.status(404).json({
                 error: '프로필 이미지를 찾을 수 없습니다.',
@@ -212,10 +200,12 @@ const UserController = {
 
     async updatePassword(req, res) {
         try {
-            const userId = req.session.userId;
             const { password } = req.body;
 
-            const success = await UserModel.updatePassword(userId, password);
+            const success = await UserModel.updatePassword(
+                req.session.userId,
+                password,
+            );
             if (success) {
                 res.json({ message: 'ok' });
             } else {
