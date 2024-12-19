@@ -174,7 +174,6 @@ const UserController = {
     async getProfileImg(req, res) {
         try {
             const img = await UserModel.getImgByUserId(req.params.userid);
-            const img = await UserModel.getImgByUserId(req.params.userid);
             if (img) return res.json(img);
             return res.status(404).json({
                 error: '프로필 이미지를 찾을 수 없습니다.',
