@@ -27,11 +27,12 @@ const PostController = {
             const { title, content } = req.body;
 
             const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
-            const insertId = await PostModel.createPost(memberId, {
+            const insertId = await PostModel.createPost(
+                memberId,
                 title,
                 content,
                 img,
-            });
+            );
             res.status(201).json({ message: '포스트 생성 성공', id: insertId });
         } catch (error) {
             res.status(500).json({
@@ -94,11 +95,12 @@ const PostController = {
             const { title, content } = req.body;
             const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
 
-            const success = await PostModel.updatePost(req.params.postid, {
+            const success = await PostModel.updatePost(
+                req.params.postid,
                 title,
                 content,
                 img,
-            });
+            );
 
             if (success) {
                 res.json({

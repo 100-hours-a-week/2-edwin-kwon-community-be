@@ -21,7 +21,7 @@ const commentModel = {
     },
 
     // 댓글 생성
-    async createComment(userId, postId, { content }) {
+    async createComment(userId, postId, content) {
         const query = `
             INSERT INTO comment (post_id, content, member_id, created_at) 
             VALUES (?, ?, ?, NOW())
@@ -31,10 +31,10 @@ const commentModel = {
     },
 
     // 댓글 업데이트
-    async updateComment(userId, commentId, { content }) {
+    async updateComment(userId, commentId, content) {
         const query = `
             UPDATE comment 
-            SET content = ?, created_at = NOW() 
+            SET content = ?
             WHERE comment_id = ? AND member_id = ?
         `;
         const [result] = await pool.query(query, [content, commentId, userId]);

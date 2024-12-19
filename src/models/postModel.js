@@ -37,7 +37,7 @@ const postModel = {
     },
 
     // 게시물 생성
-    async createPost(userId, { title, content, img }) {
+    async createPost(userId, title, content, img) {
         const query = `
       INSERT INTO post (title, content, img, created_at, updated_at, member_id, like_cnt, comment_cnt, view_cnt)
       VALUES (?, ?, ?, NOW(), NOW(), ?, 0, 0, 0)
@@ -47,7 +47,7 @@ const postModel = {
     },
 
     // 게시물 업데이트
-    async updatePost(userId, postId, { title, content, img }) {
+    async updatePost(userId, postId, title, content, img) {
         const query = `
       UPDATE post 
       SET title = ?, content = ?, img = ?, updated_at = NOW() 
