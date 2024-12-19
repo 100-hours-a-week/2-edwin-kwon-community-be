@@ -5,7 +5,7 @@ import path from 'path';
 const UserController = {
     async getUserById(req, res) {
         try {
-            const user = await UserModel.getUserById(req.params.userid);
+            const user = await UserModel.getUserById(req.params.userId);
 
             if (user) {
                 res.json(user);
@@ -76,7 +76,7 @@ const UserController = {
     async deleteUser(req, res) {
         try {
             // 사용자 정보를 먼저 가져와서 이미지 경로 확인
-            const user = await UserModel.getUserById(req.params.userid);
+            const user = await UserModel.getUserById(req.session.userId);
 
             // 이미지 파일 삭제 처리
             if (user && user.img) {
@@ -86,7 +86,7 @@ const UserController = {
                 }
             }
 
-            const success = await UserModel.deleteUser(req.params.userid);
+            const success = await UserModel.deleteUser(req.session.userId);
             req.session.destroy(err => {
                 if (err) {
                     return res.status(500).json({
@@ -99,11 +99,11 @@ const UserController = {
             // 게시글 댓글 회원 탈퇴로 변경
             await req.db.query(
                 'UPDATE post SET member_id = 1 WHERE member_id = ?;',
-                req.params.userid,
+                req.session.userId,
             );
             await req.db.query(
                 'UPDATE comment SET member_id = 1 WHERE member_id = ?;',
-                req.params.userid,
+                req.session.userId,
             );
 
             if (success) {
@@ -173,7 +173,7 @@ const UserController = {
 
     async getProfileImg(req, res) {
         try {
-            const img = await UserModel.getImgByUserId(req.params.userid);
+            const img = await UserModel.getImgByUserId(req.session.userId);
             if (img) return res.json(img);
             return res.status(404).json({
                 error: '프로필 이미지를 찾을 수 없습니다.',
@@ -185,8 +185,7 @@ const UserController = {
 
     async getProfile(req, res) {
         try {
-            const userId = req.session.userId;
-            const user = await UserModel.getUserById(userId);
+            const user = await UserModel.getUserById(req.session.userId);
 
             if (user) return res.json(user);
             return res.status(404).json({

@@ -2,22 +2,6 @@ import CommentModel from '../models/commentModel.js';
 import PostModel from '../models/postModel.js';
 
 const CommentController = {
-    async getCommentById(req, res) {
-        try {
-            const comment = await CommentModel.getCommentById(
-                req.params.commentid,
-            );
-
-            if (comment) {
-                res.json(comment);
-            } else {
-                res.status(404).json({ error: '댓글을 찾을 수 없습니다.' });
-            }
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
-
     async createComment(req, res) {
         try {
             const { content } = req.body;
