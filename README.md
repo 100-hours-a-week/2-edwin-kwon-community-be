@@ -69,7 +69,8 @@ FRONTEND_URL=
 npm start
 ```
 ## 👀 Usage
-<!-- ![usgae video](soon) -->
+https://github.com/user-attachments/assets/29eb22be-8985-4666-bab3-8b87c423c39f
+
 
 <br />
 
