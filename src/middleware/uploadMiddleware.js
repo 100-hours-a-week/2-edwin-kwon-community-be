@@ -30,6 +30,7 @@ const fileFilter = (req, file, cb) => {
         'image/png',
         'image/gif',
         'image/webp',
+        'image/svg+xml',
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
