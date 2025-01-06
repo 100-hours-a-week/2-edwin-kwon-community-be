@@ -24,7 +24,13 @@ const postStorage = multer.diskStorage({
 // 파일 필터링 (이미지 파일만 허용)
 const fileFilter = (req, file, cb) => {
     // 허용할 파일 형식 정의
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+    ];
 
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true); // 허용
