@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 
-// 파로필 이미지용 저장소 설정
+// 프로필 이미지용 저장소 설정
 const profileStorage = multer.diskStorage({
     destination(req, file, cb) {
         cb(null, 'public/uploads/profiles/'); // 프로필 이미지 저장 경로

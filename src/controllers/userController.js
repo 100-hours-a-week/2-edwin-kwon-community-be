@@ -21,7 +21,7 @@ const UserController = {
         try {
             const imgPath = req.file
                 ? `/uploads/profiles/${req.file.filename}`
-                : null;
+                : `/uploads/profiles/default.jpg`;
             const { email, password, nickname } = req.body;
 
             const insertId = await UserModel.createUser({
