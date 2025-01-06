@@ -9,6 +9,7 @@ const commentModel = {
                 c.comment_id,
                 c.content,
                 c.created_at,
+                c.updated_at,
                 m.member_id,
                 m.nickname,
                 m.img
@@ -34,7 +35,8 @@ const commentModel = {
     async updateComment(userId, commentId, content) {
         const query = `
             UPDATE comment 
-            SET content = ?
+            SET content = ?,
+                updated_at = NOW()
             WHERE comment_id = ? AND member_id = ?
         `;
         const [result] = await pool.query(query, [content, commentId, userId]);
