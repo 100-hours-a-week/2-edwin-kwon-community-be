@@ -96,6 +96,7 @@ const PostController = {
             const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
 
             const success = await PostModel.updatePost(
+                req.session.userId,
                 req.params.postid,
                 title,
                 content,
