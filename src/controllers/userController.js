@@ -58,11 +58,7 @@ const UserController = {
                 ...updates,
             });
 
-            if (success) {
-                return res.json({
-                    message: 'ok',
-                });
-            }
+            if (success) return res.json({ message: 'ok' });
             return res
                 .status(404)
                 .json({ error: '사용자를 찾을 수 없습니다.' });
@@ -77,9 +73,10 @@ const UserController = {
         try {
             // 사용자 정보를 먼저 가져와서 이미지 경로 확인
             const user = await UserModel.getUserById(req.session.userId);
+            const deleteProfileImg = '/uploads/profiles/default.jpg';
 
             // 이미지 파일 삭제 처리
-            if (user && user.img) {
+            if (user && user.img !== deleteProfileImg) {
                 const imagePath = path.join(process.cwd(), 'public', user.img);
                 if (fs.existsSync(imagePath)) {
                     fs.unlinkSync(imagePath);
@@ -87,34 +84,40 @@ const UserController = {
             }
 
             const success = await UserModel.deleteUser(req.session.userId);
+
             req.session.destroy(err => {
                 if (err) {
                     return res.status(500).json({
-                        error: '로그아웃 처리 중 오류가 발생했습니다.',
+                        error: '세션 삭제 중 오류가 발생했습니다.',
                     });
                 }
+                res.clearCookie('sessionId');
+                res.json({ message: 'ok' });
             });
-            res.clearCookie('sessionId');
 
             // 게시글 댓글 회원 탈퇴로 변경
             await req.db.query(
                 'UPDATE post SET member_id = 1 WHERE member_id = ?;',
-                req.session.userId,
+                user.member_id,
             );
             await req.db.query(
                 'UPDATE comment SET member_id = 1 WHERE member_id = ?;',
-                req.session.userId,
+                user.member_id,
             );
 
-            if (success) {
-                res.json({ message: 'ok' });
-            } else {
-                res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
+            if (!success) {
+                return res
+                    .status(404)
+                    .json({ error: '사용자를 찾을 수 없습니다.' });
             }
+            return res.json({ message: 'ok' });
         } catch (error) {
-            res.status(500).json({
-                error: '사용자 삭제 중 오류가 발생했습니다.',
-            });
+            if (!res.headersSent) {
+                return res.status(500).json({
+                    error:
+                        error.message || '사용자 삭제 중 오류가 발생했습니다.',
+                });
+            }
         }
     },
 
