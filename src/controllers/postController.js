@@ -7,11 +7,12 @@ const PostController = {
     async getPostById(req, res) {
         try {
             const postId = req.params.postid;
-            const post = await PostModel.getPostById(postId);
+            let post = await PostModel.getPostById(postId);
 
             if (post) {
                 // 조회수 증가
                 await PostModel.increaseViewCount(postId);
+                post = await PostModel.getPostById(postId);
                 res.json(post);
             } else {
                 res.status(404).json({ error: '포스트를 찾을 수 없습니다.' });
