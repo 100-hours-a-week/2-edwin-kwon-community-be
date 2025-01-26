@@ -2,6 +2,25 @@ import PostModel from '../models/postModel.js';
 import LikeModel from '../models/likeModel.js';
 import path from 'path';
 import fs from 'fs';
+import {
+    S3Client,
+    GetObjectCommand,
+    PutObjectCommand,
+    DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// AWS S3 설정
+const s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+});
 
 const PostController = {
     async getPostById(req, res) {
@@ -27,7 +46,7 @@ const PostController = {
             const memberId = req.session.userId;
             const { title, content } = req.body;
 
-            const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
+            const img = req.body.imgUrl ? req.body.imgUrl : null;
             const insertId = await PostModel.createPost(
                 memberId,
                 title,
@@ -94,7 +113,7 @@ const PostController = {
     async updatePost(req, res) {
         try {
             const { title, content } = req.body;
-            const img = req.file ? `/uploads/posts/${req.file.filename}` : null;
+            const img = req.body.imgUrl ? req.body.imgUrl : null;
 
             const success = await PostModel.updatePost(
                 req.session.userId,
@@ -143,6 +162,28 @@ const PostController = {
         } catch (error) {
             res.status(500).json({
                 error: '포스트 목록을 가져오는 중 오류가 발생했습니다.',
+            });
+        }
+    },
+
+    async getPresignedUrlPost(req, res) {
+        try {
+            const params = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: `posts/${Date.now()}.${req.body.fileType.split('/')[1]}`,
+                ContentType: req.body.fileType,
+            };
+
+            const command = new PutObjectCommand(params);
+            const presignedUrl = await getSignedUrl(s3, command, {
+                expiresIn: 60,
+            });
+
+            const cloudFrontUrl = `${process.env.CLOUDFRONT_DOMAIN}/${params.Key}`;
+            res.json({ presignedUrl, cloudFrontUrl });
+        } catch (error) {
+            res.status(500).json({
+                error: error.message,
             });
         }
     },

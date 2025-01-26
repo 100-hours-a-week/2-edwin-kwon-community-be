@@ -29,11 +29,6 @@ router.post(
     '/auth/presigned-url/profile',
     userController.getPresignedUrlProfile,
 );
-router.post(
-    '/auth/presigned-url/post',
-    isAuthenticated,
-    userController.getPresignedUrlPost,
-);
 router.put(
     '/users/password',
     isAuthenticated,
@@ -60,6 +55,11 @@ router.delete(
     '/posts/:postid/like',
     isAuthenticated,
     postController.unlikePost,
+);
+router.post(
+    '/auth/presigned-url/post',
+    isAuthenticated,
+    postController.getPresignedUrlPost,
 );
 
 // comment

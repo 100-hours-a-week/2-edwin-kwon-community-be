@@ -1,10 +1,9 @@
 import UserModel from '../models/userModel.js';
-import fs from 'fs';
-import path from 'path';
 import {
     S3Client,
     GetObjectCommand,
     PutObjectCommand,
+    DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import dotenv from 'dotenv';
@@ -60,6 +59,7 @@ const UserController = {
     async updateUser(req, res) {
         try {
             const updates = {};
+            const user = await UserModel.getUserById(req.session.userId);
 
             // 닉네임 업데이트가 있는 경우
             if (req.body.nickname) {
@@ -67,8 +67,22 @@ const UserController = {
             }
 
             // 이미지 업데이트가 있는 경우
-            if (req.file) {
-                updates.img = `/uploads/profiles/${req.file.filename}`;
+            if (req.body.imgUrl) {
+                // 기존 이미지가 있고 기본 이미지가 아닌 경우 S3에서 삭제
+                const defaultProfileImg = '/uploads/profiles/default.jpg';
+                if (user && user.img !== defaultProfileImg) {
+                    try {
+                        const key = user.img.split('/').pop(); // 파일명 추출
+                        const deleteCommand = new DeleteObjectCommand({
+                            Bucket: process.env.AWS_BUCKET_NAME,
+                            Key: `profiles/${key}`,
+                        });
+                        await s3.send(deleteCommand);
+                    } catch (error) {
+                        console.error('S3 이미지 삭제 실패:', error);
+                    }
+                }
+                updates.img = req.body.imgUrl;
             }
 
             const success = await UserModel.updateUser(req.session.userId, {
@@ -88,15 +102,20 @@ const UserController = {
 
     async deleteUser(req, res) {
         try {
-            // 사용자 정보를 먼저 가져와서 이미지 경로 확인
             const user = await UserModel.getUserById(req.session.userId);
-            const deleteProfileImg = '/uploads/profiles/default.jpg';
+            const defaultProfileImg = '/uploads/profiles/default.jpg';
 
-            // 이미지 파일 삭제 처리
-            if (user && user.img !== deleteProfileImg) {
-                const imagePath = path.join(process.cwd(), 'public', user.img);
-                if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
+            // S3에서 이미지 삭제 처리
+            if (user && user.img !== defaultProfileImg) {
+                try {
+                    const key = user.img.split('/').pop(); // 파일명 추출
+                    const deleteCommand = new DeleteObjectCommand({
+                        Bucket: process.env.AWS_BUCKET_NAME,
+                        Key: `profiles/${key}`,
+                    });
+                    await s3.send(deleteCommand);
+                } catch (error) {
+                    console.error('S3 이미지 삭제 실패:', error);
                 }
             }
 
@@ -251,30 +270,7 @@ const UserController = {
 
             // CloudFront URL 생성 (다운로드용)
             const cloudFrontUrl = `${process.env.CLOUDFRONT_DOMAIN}/${params.Key}`;
-            res.json({
-                presignedUrl,
-                cloudFrontUrl,
-            });
-        } catch (error) {
-            res.status(500).json({
-                error: error.message,
-            });
-        }
-    },
-
-    async getPresignedUrlPost(req, res) {
-        try {
-            const params = {
-                Bucket: process.env.AWS_S3_BUCKET_NAME,
-                Key: `posts/${req.body.fileName}.${req.body.fileType}`, // 게시물 이미지 경로
-                Expires: 60, // URL 만료 시간 (초)
-            };
-
-            const command = new PutObjectCommand(params);
-            const presignedUrl = await getSignedUrl(s3, command, {
-                expiresIn: 60,
-            });
-            res.json({ presignedUrl });
+            res.json({ presignedUrl, cloudFrontUrl });
         } catch (error) {
             res.status(500).json({
                 error: 'Pre-signed URL 생성 중 오류가 발생했습니다.',
