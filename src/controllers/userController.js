@@ -1,6 +1,24 @@
 import UserModel from '../models/userModel.js';
 import fs from 'fs';
 import path from 'path';
+import {
+    S3Client,
+    GetObjectCommand,
+    PutObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// AWS S3 설정
+const s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+});
 
 const UserController = {
     async getUserById(req, res) {
@@ -19,11 +37,10 @@ const UserController = {
 
     async createUser(req, res) {
         try {
-            const imgPath = req.file
-                ? `/uploads/profiles/${req.file.filename}`
-                : `/uploads/profiles/default.jpg`;
-            const { email, password, nickname } = req.body;
-
+            const { email, password, nickname, imgUrl } = req.body;
+            let imgPath = '/uploads/profiles/default.jpg';
+            if (imgUrl) imgPath = imgUrl;
+            console.log('imgPath', imgPath);
             const insertId = await UserModel.createUser({
                 email,
                 password,
@@ -215,6 +232,52 @@ const UserController = {
         } catch (error) {
             res.status(500).json({
                 error: '사용자 정보 업데이트 중 오류가 발생했습니다.',
+            });
+        }
+    },
+
+    async getPresignedUrlProfile(req, res) {
+        try {
+            const params = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: `profiles/${Date.now()}.${req.body.fileType.split('/')[1]}`,
+                ContentType: req.body.fileType,
+            };
+
+            const command = new PutObjectCommand(params);
+            const presignedUrl = await getSignedUrl(s3, command, {
+                expiresIn: 60, // URL 만료 시간 (초)
+            });
+
+            // CloudFront URL 생성 (다운로드용)
+            const cloudFrontUrl = `${process.env.CLOUDFRONT_DOMAIN}/${params.Key}`;
+            res.json({
+                presignedUrl,
+                cloudFrontUrl,
+            });
+        } catch (error) {
+            res.status(500).json({
+                error: error.message,
+            });
+        }
+    },
+
+    async getPresignedUrlPost(req, res) {
+        try {
+            const params = {
+                Bucket: process.env.AWS_S3_BUCKET_NAME,
+                Key: `posts/${req.body.fileName}.${req.body.fileType}`, // 게시물 이미지 경로
+                Expires: 60, // URL 만료 시간 (초)
+            };
+
+            const command = new PutObjectCommand(params);
+            const presignedUrl = await getSignedUrl(s3, command, {
+                expiresIn: 60,
+            });
+            res.json({ presignedUrl });
+        } catch (error) {
+            res.status(500).json({
+                error: 'Pre-signed URL 생성 중 오류가 발생했습니다.',
             });
         }
     },

@@ -1,29 +1,44 @@
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
+import multerS3 from 'multer-s3';
 import path from 'path';
 
-// 프로필 이미지용 저장소 설정
-const profileStorage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, 'public/uploads/profiles/'); // 프로필 이미지 저장 경로
-    },
-    filename(req, file, cb) {
-        cb(null, 'profile-' + Date.now() + path.extname(file.originalname));
+// AWS S3 설정
+const s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
 });
 
-// 게시글 이미지용 저장소 설정
-const postStorage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, 'public/uploads/posts/'); // 게시글 이미지 저장 경로
+// 프로필 이미지용 S3 저장소 설정
+const profileStorage = multerS3({
+    s3,
+    bucket: process.env.AWS_BUCKET_NAME,
+    key(req, file, cb) {
+        cb(
+            null,
+            `profiles/${Date.now().toString()}${path.extname(file.originalname)}`,
+        );
     },
-    filename(req, file, cb) {
-        cb(null, 'post-' + Date.now() + path.extname(file.originalname));
+});
+
+// 게시글 이미지용 S3 저장소 설정
+const postStorage = multerS3({
+    s3,
+    bucket: process.env.AWS_BUCKET_NAME,
+    acl: 'public-read',
+    key(req, file, cb) {
+        cb(
+            null,
+            `posts/${Date.now().toString()}${path.extname(file.originalname)}`,
+        );
     },
 });
 
 // 파일 필터링 (이미지 파일만 허용)
 const fileFilter = (req, file, cb) => {
-    // 허용할 파일 형식 정의
     const allowedTypes = [
         'image/jpeg',
         'image/jpg',
@@ -34,7 +49,7 @@ const fileFilter = (req, file, cb) => {
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true); // 허용
+        cb(null, true);
     } else {
         cb(new Error('지원하지 않는 파일 형식입니다.'), false);
     }
@@ -59,5 +74,4 @@ const uploadPost = multer({
         files: 1,
     },
 }).single('img');
-
 export { uploadProfile, uploadPost };

@@ -25,6 +25,15 @@ router.post(
 router.post('/auth/login', isValidPassword, userController.login);
 router.get('/auth/img', isAuthenticated, userController.getProfileImg);
 router.post('/auth/logout', isAuthenticated, userController.logout);
+router.post(
+    '/auth/presigned-url/profile',
+    userController.getPresignedUrlProfile,
+);
+router.post(
+    '/auth/presigned-url/post',
+    isAuthenticated,
+    userController.getPresignedUrlPost,
+);
 router.put(
     '/users/password',
     isAuthenticated,
